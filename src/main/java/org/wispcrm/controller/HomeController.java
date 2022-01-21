@@ -31,12 +31,17 @@ public class HomeController {
 	@GetMapping("/")
 	public String home(Model modelo) {
 	   List<Cliente> cliente=ClienteDao.findAll();
+
        modelo.addAttribute("numeroclientes",cliente.size());
 	   modelo.addAttribute("numerofacturas",facturaD.findFacturaByEstado(true).size());
-	   modelo.addAttribute("cantidad",facturaD.Pendientes());
-	   Locale locale = new Locale("es", "CO");      
-	   NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(locale);
-	   modelo.addAttribute("pagadas",currencyFormatter.format(facturaD.Pagadas().doubleValue()));
+	   modelo.addAttribute("cantidad",FormatearMoneda(facturaD.Pendientes()));
+	   modelo.addAttribute("pagadas",FormatearMoneda(facturaD.Pagadas()));
 	   return "home";
+	}
+
+	private Object FormatearMoneda(Long Numero){
+		Locale locale = new Locale("es", "CO");
+		NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(locale);
+		return currencyFormatter.format(Numero.doubleValue());
 	}
 }

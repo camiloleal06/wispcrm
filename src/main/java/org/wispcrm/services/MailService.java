@@ -1,0 +1,89 @@
+package org.wispcrm.services;
+
+import java.io.File;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
+
+@Service
+public class MailService {
+
+    @Autowired
+    private JavaMailSender javaMailSender;
+    
+
+    public void sendMail(String from, String to, String subject, String body) {
+
+        SimpleMailMessage mail = new SimpleMailMessage();
+
+        mail.setFrom(from);
+        mail.setTo(to);
+        mail.setSubject(subject);
+        mail.setText(body);
+
+        javaMailSender.send(mail);
+    }
+    
+    @Autowired
+    private JavaMailSender mailSender;
+    public void sendEmailAttachment(
+    		String subject, 
+    		 String message,
+    		 String fromEmailAddress,
+			String toEmailAddresses, 
+			boolean isHtmlMail, 
+			File attachment) {
+		try {
+			MimeMessage mimeMessage = mailSender.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+			helper.setFrom(fromEmailAddress);
+			helper.setTo(toEmailAddresses);
+			helper.setSubject(subject);
+
+			if (isHtmlMail) {
+				helper.setText("<html><body>" + message + "</html></body>", true);
+			} else {
+				helper.setText(message);
+			}
+
+			// attach the file into email body
+			FileSystemResource file = new FileSystemResource(attachment);
+			helper.addAttachment(attachment.getName(), file);
+
+			mailSender.send(mimeMessage);
+
+			System.out.println("Email sending complete.");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+    public void sendEMailWithAttach(String to, String subject, String body, String attachment) throws AddressException, MessagingException 
+    {
+        MimeMessage message = mailSender.createMimeMessage();
+
+                message.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+                message.setFrom(new InternetAddress("sysredcartagena@gmail.com"));
+                message.setSubject("subject");
+                message.setText("body");
+
+             //   FileSystemResource file = new FileSystemResource(new File("C:\\Users"+attachment));
+                MimeMessageHelper helper = new MimeMessageHelper(message, true);
+                helper.addAttachment("attachment-document-name.jpg", new ClassPathResource(attachment));
+
+      
+                mailSender.send(message);
+       
+    }
+}

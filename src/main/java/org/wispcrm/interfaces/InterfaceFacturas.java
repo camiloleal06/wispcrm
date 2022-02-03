@@ -12,6 +12,7 @@ public interface InterfaceFacturas extends CrudRepository<Factura, Integer> {
 	Factura  findFirstFacturaByCliente(Cliente cliente);
 	
 	List<Factura> findFacturaByEstado(boolean f);
+	
 	@Query(value = "SELECT sum(valor) FROM Factura WHERE estado=true")
     public Long Pendientes();
 	

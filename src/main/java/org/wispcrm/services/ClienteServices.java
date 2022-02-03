@@ -6,9 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.wispcrm.interfaceService.InterfaceClienteService;
+import org.wispcrm.interfaces.ClienteRepository;
 import org.wispcrm.interfaces.InterfaceClientes;
 import org.wispcrm.interfaces.InterfaceFacturas;
 import org.wispcrm.modelo.Cliente;
+import org.wispcrm.modelo.ClienteDTO;
 import org.wispcrm.modelo.Factura;
 
 
@@ -17,6 +19,9 @@ public class ClienteServices implements InterfaceClienteService {
 
 	@Autowired
 	private InterfaceClientes clienteDao;
+	
+	@Autowired
+	private ClienteRepository clienteRepo;
 	
 	@Autowired
 	private InterfaceFacturas facturaDao;
@@ -56,6 +61,21 @@ public class ClienteServices implements InterfaceClienteService {
 	
 		facturaDao.save(factura);
 		
+	}
+
+
+	@Override
+	public List<ClienteDTO> listaClientes() {
+		// TODO Auto-generated method stub
+	return clienteRepo.lista();
+	
+	}
+
+
+	@Override
+	public Page<ClienteDTO> lista(Pageable pageable) {
+		// TODO Auto-generated method stub
+		return clienteRepo.lista(pageable);
 	}
 	
 

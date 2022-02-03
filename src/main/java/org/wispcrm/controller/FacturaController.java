@@ -28,9 +28,11 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.wispcrm.interfaceService.InterfaceClienteService;
 import org.wispcrm.interfaceService.InterfacePlanService;
 import org.wispcrm.interfaces.InterfaceFacturas;
+import org.wispcrm.interfaces.InterfacePagos;
 import org.wispcrm.modelo.Cliente;
 import org.wispcrm.modelo.Factura;
 import org.wispcrm.modelo.Pago;
+import org.wispcrm.modelo.PagoDTO;
 import org.wispcrm.services.ClienteServices;
 import org.wispcrm.services.EnviarSMS;
 import org.wispcrm.services.FacturaReportService;
@@ -48,6 +50,8 @@ public class FacturaController extends Thread {
 
 	@Autowired
 	private PagoService pagosDAO;
+	@Autowired
+	private InterfacePagos pagosD;
 
 	@Autowired
 	private ClienteServices datacliente;
@@ -76,6 +80,7 @@ public class FacturaController extends Thread {
 	final private String VER_FORMULARIO_FACTURA = "factura/formFactura";
 	final private String LISTAR_CLIENTE = "cliente/listaCliente";
 	final private String LISTAR_FACTURA = "factura/listaFactura";
+	final private String LISTAR_PAGO = "factura/listaPago";
 
 	@RequestMapping(value = "/factura")
 	public String crear(@RequestParam(name = "clienteID") Integer clienteID, Model modelo, RedirectAttributes flash)
@@ -353,7 +358,13 @@ public class FacturaController extends Thread {
 		}
 
 	}
-
+	@RequestMapping(value = "/listarpago")
+	public String listarpago(Model modelo) {
+		List<PagoDTO> pago= pagosD.lista();
+        modelo.addAttribute("listapagos", pago);
+		System.out.println(pago);
+		return LISTAR_PAGO;
+	}
 	public boolean EmailisValid(String email) {
 		String emailFormate = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\."
 				+ "[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$";

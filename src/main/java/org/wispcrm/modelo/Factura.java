@@ -44,8 +44,7 @@ public class Factura {
 	
 	@ManyToOne(fetch=FetchType.LAZY)
 	private Cliente cliente;
-	
-    
+	    
 	private double valor;
 	
 	private int notificacion;

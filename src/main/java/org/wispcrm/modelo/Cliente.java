@@ -55,7 +55,7 @@ private String ipaddres;
 @DateTimeFormat(pattern="yyyy-MM-dd")
 private Date CreateAt;
 
-@OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+@OneToMany(mappedBy = "cliente", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
 private List<Factura> facturas;
 
 @ManyToOne(fetch = FetchType.EAGER)

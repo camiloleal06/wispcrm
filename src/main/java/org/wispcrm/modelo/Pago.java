@@ -10,7 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -35,7 +35,7 @@ public class Pago implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@ManyToOne(fetch = FetchType.LAZY, cascade =  CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY, cascade =  CascadeType.ALL)
 	private Factura factura;
 	
 	@Column(name = "fecha_pago")

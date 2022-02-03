@@ -22,6 +22,7 @@ import org.wispcrm.interfaceService.InterfaceClienteService;
 import org.wispcrm.interfaceService.InterfacePlanService;
 import org.wispcrm.interfaces.InterfaceClientes;
 import org.wispcrm.modelo.Cliente;
+import org.wispcrm.modelo.ClienteDTO;
 import org.wispcrm.services.ClienteService;
 import org.wispcrm.services.EnviarSMS;
 
@@ -79,7 +80,7 @@ public class ClienteController {
 
 	@GetMapping("/listar")
 	public String listarClientes(Model modelo) {
-		List<Cliente> cliente = ClienteDao.findAll();
+		List<ClienteDTO> cliente = ClienteDao.listaClientes();
 		modelo.addAttribute("cliente", cliente);
 		return VER_LISTA_CLIENTE;
 	}

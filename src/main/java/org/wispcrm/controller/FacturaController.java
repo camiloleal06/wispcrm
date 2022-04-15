@@ -47,7 +47,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 @SessionAttributes("factura")
 public class FacturaController {
 
-    private static final String LLEGÓ_TU_FACTURA_DE_INTERNET = "Llegó tu factura de Internet!";
+    private static final String LLEGO_TU_FACTURA_DE_INTERNET = "Llegó tu factura de Internet!";
     private static final String SE_HA_GENERADO_UNA_NUEVA_FACTURA_DE_SU_SERVICIO_DE_INTERNET = " se ha generado una nueva factura de su servicio de Internet ";
     private static final String ADMINISTRACION_TECNOWISP_COM_CO = "administracion@tecnowisp.com.co";
     private static final String ESTIMADO_A_CLIENTE = "Estimado(a) Cliente ";
@@ -214,7 +214,7 @@ public class FacturaController {
                 ESTIMADO_A + factura.getCliente().getNombres()
                         + SE_HA_GENERADO_UNA_NUEVA_FACTURA_DE_SU_SERVICIO_DE_INTERNET
                         + " http://sysredcartagena.duckdns.org:8081/descargarfactura/" + factura.getId());
-        mailService.sendEmailAttachment(LLEGÓ_TU_FACTURA_DE_INTERNET, body, ADMINISTRACION_TECNOWISP_COM_CO, email,
+        mailService.sendEmailAttachment(LLEGO_TU_FACTURA_DE_INTERNET, body, ADMINISTRACION_TECNOWISP_COM_CO, email,
                 true, new File(client + ".pdf"));
         flash.addFlashAttribute("info", "Se ha generado una factura a " + factura.getCliente().getNombres() + " "
                 + factura.getCliente().getApellidos() + " correctamente");
@@ -258,7 +258,7 @@ public class FacturaController {
                         + SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA;
                 String email = factura.getCliente().getEmail();
                 String tel = factura.getCliente().getTelefono();
-                mailService.sendEmailAttachment(LLEGÓ_TU_FACTURA_DE_INTERNET, body, ADMINISTRACION_TECNOWISP_COM_CO,
+                mailService.sendEmailAttachment(LLEGO_TU_FACTURA_DE_INTERNET, body, ADMINISTRACION_TECNOWISP_COM_CO,
                         email, true, new File(client + ".pdf"));
                 if (tel.length() == 10) {
                     smsService.enviarSMS(factura.getCliente().getTelefono(),
@@ -290,7 +290,7 @@ public class FacturaController {
                         + SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA;
                 String email = factura.getCliente().getEmail();
                 String tel = factura.getCliente().getTelefono();
-                mailService.sendEmailAttachment(LLEGÓ_TU_FACTURA_DE_INTERNET, body, ADMINISTRACION_TECNOWISP_COM_CO,
+                mailService.sendEmailAttachment(LLEGO_TU_FACTURA_DE_INTERNET, body, ADMINISTRACION_TECNOWISP_COM_CO,
                         email, true, new File(client + ".pdf"));
 
                 if (tel.length() == 10) {

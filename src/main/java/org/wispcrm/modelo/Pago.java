@@ -15,6 +15,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -35,12 +36,21 @@ public class Pago implements Serializable {
     private Integer id;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Transient
     private Factura factura;
 
     @Column(name = "fecha_pago")
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private Date FechaPago;
+    private Date fechaPago;
+
+    public Date getFechaPago() {
+        return fechaPago;
+    }
+
+    public void setFechaPago(Date fechaPago) {
+        this.fechaPago = fechaPago;
+    }
 
     private double pago;
 
@@ -62,14 +72,6 @@ public class Pago implements Serializable {
         this.factura = factura;
     }
 
-    public Date getFechaPago() {
-        return FechaPago;
-    }
-
-    public void setFechaPago(Date fechaPago) {
-        FechaPago = fechaPago;
-    }
-
     public double getPago() {
         return pago;
     }
@@ -87,12 +89,12 @@ public class Pago implements Serializable {
     }
 
     public Pago() {
-
+        // Spring lo Exige
     }
 
     @PrePersist
     public void prePersist() {
-        FechaPago = new Date();
+        fechaPago = new Date();
     }
 
 }

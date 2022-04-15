@@ -26,7 +26,7 @@ C:\wispcrm\src\main\java\org\wispcrm\interfaces\InterfaceFacturas.java
 C:\wispcrm\src\main\java\org\wispcrm\controller\ClienteController.java
 C:\wispcrm\src\main\java\org\wispcrm\services\EnviarSMS.java
 C:\wispcrm\src\main\java\org\wispcrm\WispcrmApplication.java
-C:\wispcrm\src\main\java\org\wispcrm\controller\getFactura.java
+C:\wispcrm\src\main\java\org\wispcrm\controller\GetFactura.java
 C:\wispcrm\src\main\java\org\wispcrm\mikrotik\Funciones.java
 C:\wispcrm\src\main\java\org\wispcrm\modelo\PagoDTO.java
 C:\wispcrm\src\main\java\org\wispcrm\interfaceService\InterfacePagoService.java

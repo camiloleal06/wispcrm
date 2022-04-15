@@ -34,8 +34,8 @@ public class HomeController {
 
         modelo.addAttribute("numeroclientes", cliente.size());
         modelo.addAttribute("numerofacturas", facturaD.findFacturaByEstado(true).size());
-        modelo.addAttribute("cantidad", formatearMoneda(facturaD.Pendientes()));
-        modelo.addAttribute("pagadas", formatearMoneda(facturaD.Pagadas()));
+        modelo.addAttribute("cantidad", formatearMoneda(facturaD.pendientes()));
+        modelo.addAttribute("pagadas", formatearMoneda(facturaD.pagadas()));
         return "home";
     }
 

@@ -119,7 +119,8 @@ public class FacturaController {
     }
 
     @GetMapping("/pagar/{id}")
-    public String pagar(@PathVariable("id") int id, SessionStatus status, Model modelo, RedirectAttributes flash) {
+    public String pagar(@PathVariable("id") int id, SessionStatus status, Model modelo, RedirectAttributes flash)
+            throws SQLException {
         Factura factura = facturaDao.findFacturabyid(id);
         Pago pago = new Pago();
         pago.setPago(factura.getValor());
@@ -129,7 +130,7 @@ public class FacturaController {
         pagosDAO.save(pago);
         facturaD.save(factura);
         try {
-            reporte.PagoPdfReport(factura.getId(), pago.getId() + "_" + factura.getCliente().getNombres() + ".pdf");
+            reporte.pagoPdfReport(factura.getId(), pago.getId() + "_" + factura.getCliente().getNombres() + ".pdf");
 
         } catch (JRException e) {
             e.printStackTrace();
@@ -313,7 +314,7 @@ public class FacturaController {
 
     @GetMapping("/descargarfactura/{id}")
     public void descargarfactura(@PathVariable(value = "id") Integer id, RedirectAttributes flash,
-            HttpServletResponse response) throws IOException, JRException {
+            HttpServletResponse response) throws IOException, JRException, SQLException {
         Factura factura = facturaDao.findFacturabyid(id);
         if (factura != null) {
             response.setContentType("application/pdf");

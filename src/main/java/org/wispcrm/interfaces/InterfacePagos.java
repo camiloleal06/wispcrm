@@ -9,20 +9,19 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 import org.wispcrm.modelo.Pago;
 import org.wispcrm.modelo.PagoDTO;
+
 @Repository
-public interface InterfacePagos extends PagingAndSortingRepository<Pago,Integer> {
+public interface InterfacePagos extends PagingAndSortingRepository<Pago, Integer> {
 
-	@Query(value = "SELECT sum(pago) FROM Pago WHERE MONTH(FechaPago)=MONTH(CURRENT_TIMESTAMP)")
-    public Long Pagadas();
-	
-	@Query("SELECT new org.wispcrm.modelo.PagoDTO(p.id, p.pago , f.id, CONCAT(c.nombres,' ',c.apellidos), p.FechaPago, f.estado) "
-			+ "FROM Pago p JOIN p.factura f JOIN f.cliente c WHERE f.periodo=2 ")
-	public List<PagoDTO> lista();
-	
-	@Query("SELECT new org.wispcrm.modelo.PagoDTO(p.id, p.pago , f.id, CONCAT(c.nombres,' ',c.apellidos), p.FechaPago, f.estado) "
-			+ "FROM Pago p JOIN p.factura f JOIN f.cliente c WHERE f.periodo=2 ")
-	public Page<PagoDTO> lista(Pageable pageable);
-	
+    @Query(value = "SELECT sum(pago) FROM Pago WHERE MONTH(fechaPago)=MONTH(CURRENT_TIMESTAMP)")
+    public Long pagadas();
 
+    @Query("SELECT new org.wispcrm.modelo.PagoDTO(p.id, p.pago , f.id, CONCAT(c.nombres,' ',c.apellidos), p.fechaPago, f.estado) "
+            + "FROM Pago p JOIN p.factura f JOIN f.cliente c WHERE f.periodo=2 ")
+    public List<PagoDTO> lista();
+
+    @Query("SELECT new org.wispcrm.modelo.PagoDTO(p.id, p.pago , f.id, CONCAT(c.nombres,' ',c.apellidos), p.fechaPago, f.estado) "
+            + "FROM Pago p JOIN p.factura f JOIN f.cliente c WHERE f.periodo=2 ")
+    public Page<PagoDTO> lista(Pageable pageable);
 
 }

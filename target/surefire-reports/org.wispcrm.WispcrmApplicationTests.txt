@@ -1,4 +1,12 @@
 -------------------------------------------------------------------------------
 Test set: org.wispcrm.WispcrmApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 11.987 s - in org.wispcrm.WispcrmApplicationTests
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 11.096 s <<< FAILURE! - in org.wispcrm.WispcrmApplicationTests
+contextLoads  Time elapsed: 0.014 s  <<< ERROR!
+java.lang.IllegalStateException: Failed to load ApplicationContext
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'interfacePagos': FactoryBean threw exception on object creation; nested exception is java.lang.IllegalArgumentException: Validation failed for query for method public abstract java.util.List org.wispcrm.interfaces.InterfacePagos.lista()!
+Caused by: java.lang.IllegalArgumentException: Validation failed for query for method public abstract java.util.List org.wispcrm.interfaces.InterfacePagos.lista()!
+Caused by: java.lang.IllegalArgumentException: org.hibernate.QueryException: could not resolve property: factura of: org.wispcrm.modelo.Pago [SELECT new org.wispcrm.modelo.PagoDTO(p.id, p.pago , f.id, CONCAT(c.nombres,' ',c.apellidos), p.FechaPago, f.estado) FROM org.wispcrm.modelo.Pago p JOIN p.factura f JOIN f.cliente c WHERE f.periodo=2 ]
+Caused by: org.hibernate.QueryException: could not resolve property: factura of: org.wispcrm.modelo.Pago [SELECT new org.wispcrm.modelo.PagoDTO(p.id, p.pago , f.id, CONCAT(c.nombres,' ',c.apellidos), p.FechaPago, f.estado) FROM org.wispcrm.modelo.Pago p JOIN p.factura f JOIN f.cliente c WHERE f.periodo=2 ]
+Caused by: org.hibernate.QueryException: could not resolve property: factura of: org.wispcrm.modelo.Pago
+

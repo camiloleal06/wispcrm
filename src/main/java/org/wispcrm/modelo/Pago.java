@@ -15,7 +15,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -36,7 +35,6 @@ public class Pago implements Serializable {
     private Integer id;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @Transient
     private Factura factura;
 
     @Column(name = "fecha_pago")

@@ -19,82 +19,80 @@ import javax.persistence.TemporalType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name="Pagos")
-
+@Table(name = "Pagos")
 
 public class Pago implements Serializable {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	/**
-	 * 
-	 */
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-	
-	@OneToOne(fetch = FetchType.LAZY, cascade =  CascadeType.ALL)
-	private Factura factura;
-	
-	@Column(name = "fecha_pago")
-	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(pattern="yyyy-MM-dd")
-	private Date FechaPago;
-	
-	private double pago;
-	
-	private double saldo;
 
-	public Integer getId() {
-		return id;
-	}
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Factura factura;
 
-	public Factura getFactura() {
-		return factura;
-	}
+    @Column(name = "fecha_pago")
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date FechaPago;
 
-	public void setFactura(Factura factura) {
-		this.factura = factura;
-	}
+    private double pago;
 
-	public Date getFechaPago() {
-		return FechaPago;
-	}
+    private double saldo;
 
-	public void setFechaPago(Date fechaPago) {
-		FechaPago = fechaPago;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public double getPago() {
-		return pago;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setPago(double pago) {
-		this.pago = pago;
-	}
+    public Factura getFactura() {
+        return factura;
+    }
 
-	public double getSaldo() {
-		return saldo;
-	}
+    public void setFactura(Factura factura) {
+        this.factura = factura;
+    }
 
-	public void setSaldo(double saldo) {
-		this.saldo = saldo;
-	}
+    public Date getFechaPago() {
+        return FechaPago;
+    }
 
-	public Pago() {
-	
-		// TODO Auto-generated constructor stub
-	}
-	
-	@PrePersist
-	public void prePersist() {
-		FechaPago=new Date();
-	}
+    public void setFechaPago(Date fechaPago) {
+        FechaPago = fechaPago;
+    }
+
+    public double getPago() {
+        return pago;
+    }
+
+    public void setPago(double pago) {
+        this.pago = pago;
+    }
+
+    public double getSaldo() {
+        return saldo;
+    }
+
+    public void setSaldo(double saldo) {
+        this.saldo = saldo;
+    }
+
+    public Pago() {
+
+    }
+
+    @PrePersist
+    public void prePersist() {
+        FechaPago = new Date();
+    }
 
 }

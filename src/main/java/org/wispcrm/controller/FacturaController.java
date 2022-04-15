@@ -45,8 +45,13 @@ import net.sf.jasperreports.engine.JasperPrint;
 
 @Controller
 @SessionAttributes("factura")
-public class FacturaController extends Thread {
+public class FacturaController {
 
+    private static final String ADMINISTRACION_TECNOWISP_COM_CO = "administracion@tecnowisp.com.co";
+    private static final String ESTIMADO_A_CLIENTE = "Estimado(a) Cliente ";
+    private static final String SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA = " se ha generado una nueva factura a su nombre Gracias por su Preferencia";
+    private static final String ESTIMADO_A = "Estimado(a) ";
+    private static final String REDIRECT_LISTARFACTURA = "redirect:/listarfactura";
     @Autowired
     private PagoService pagosDAO;
     @Autowired
@@ -128,11 +133,11 @@ public class FacturaController extends Thread {
             e.printStackTrace();
         }
         smsService.enviarSMS(factura.getCliente().getTelefono(),
-                "Estimado(a) " + factura.getCliente().getNombres() + " hemos recibido su pago "
+                ESTIMADO_A + factura.getCliente().getNombres() + " hemos recibido su pago "
                         + " http://sysredcartagena.duckdns.org:8888/descargarpago/" + factura.getId());
         flash.addFlashAttribute("info", "Pago agregado correctamente");
         status.setComplete();
-        return "redirect:/listarfactura";
+        return REDIRECT_LISTARFACTURA;
     }
 
     @GetMapping("/recordar/{id}")
@@ -151,7 +156,7 @@ public class FacturaController extends Thread {
             flash.addFlashAttribute("info", "El mensaje ha sido enviado a : " + telefono);
             status.setComplete();
         }
-        return "redirect:/listarfactura";
+        return REDIRECT_LISTARFACTURA;
     }
 
     @GetMapping("/avisocorte/{id}")
@@ -159,11 +164,11 @@ public class FacturaController extends Thread {
         Factura factura = FacturaDao.findFacturabyid(id);
         factura.setEstado(true);
         facturaD.save(factura);
-        smsService.enviarSMS(factura.getCliente().getTelefono(), "Estimado(a) " + factura.getCliente().getNombres()
+        smsService.enviarSMS(factura.getCliente().getTelefono(), ESTIMADO_A + factura.getCliente().getNombres()
                 + " Usted cuenta con dos facturas vencidas, " + "su servicio de internet será suspendido Att. SYSRED");
         flash.addFlashAttribute("info", "El mensaje ha sido enviado a : " + factura.getCliente().getTelefono());
         status.setComplete();
-        return "redirect:/listarfactura";
+        return REDIRECT_LISTARFACTURA;
     }
 
     @GetMapping("/eliminarfactura/{id}")
@@ -174,7 +179,7 @@ public class FacturaController extends Thread {
         facturaD.deleteById(id);
         flash.addFlashAttribute("warning", "Cliente Eliminado con exito");
         status.setComplete();
-        return "redirect:/listarfactura";
+        return REDIRECT_LISTARFACTURA;
     }
 
     @PostMapping("/savefactura")
@@ -192,8 +197,8 @@ public class FacturaController extends Thread {
 
         dataCliente.saveFactura(factura);
         String nombres = factura.getCliente().getNombres() + ' ' + factura.getCliente().getApellidos();
-        String body = "Estimado(a) Cliente " + nombres
-                + " se ha generado una nueva factura a su nombre Gracias por su Preferencia";
+        String body = ESTIMADO_A_CLIENTE + nombres
+                + SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA;
         String email = factura.getCliente().getEmail();
         int id = factura.getId();
         try {
@@ -204,10 +209,10 @@ public class FacturaController extends Thread {
         }
 
         smsService.enviarSMS(factura.getCliente().getTelefono(),
-                "Estimado(a) " + factura.getCliente().getNombres()
+                ESTIMADO_A + factura.getCliente().getNombres()
                         + " se ha generado una nueva factura de su servicio de Internet "
                         + " http://sysredcartagena.duckdns.org:8081/descargarfactura/" + factura.getId());
-        mailService.sendEmailAttachment("Llegó tu factura de Internet!", body, "administracion@tecnowisp.com.co", email,
+        mailService.sendEmailAttachment("Llegó tu factura de Internet!", body, ADMINISTRACION_TECNOWISP_COM_CO, email,
                 true, new File(client + ".pdf"));
         flash.addFlashAttribute("info", "Se ha generado una factura a " + factura.getCliente().getNombres() + " "
                 + factura.getCliente().getApellidos() + " correctamente");
@@ -248,15 +253,15 @@ public class FacturaController extends Thread {
                     e.printStackTrace();
                 }
                 String nombres = factura.getCliente().getNombres() + ' ' + factura.getCliente().getApellidos();
-                String body = "Estimado(a) Cliente " + nombres
-                        + " se ha generado una nueva factura a su nombre Gracias por su Preferencia";
+                String body = ESTIMADO_A_CLIENTE + nombres
+                        + SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA;
                 String email = factura.getCliente().getEmail();
                 String tel = factura.getCliente().getTelefono();
                 mailService.sendEmailAttachment("Llegó tu factura de Internet!", body,
-                        "administracion@tecnowisp.com.co", email, true, new File(client + ".pdf"));
+                        ADMINISTRACION_TECNOWISP_COM_CO, email, true, new File(client + ".pdf"));
                 if (tel.length() == 10) {
                     smsService.enviarSMS(factura.getCliente().getTelefono(),
-                            "Estimado(a) " + factura.getCliente().getNombres()
+                            ESTIMADO_A + factura.getCliente().getNombres()
                                     + " se ha generado una nueva factura de su servicio de Internet "
                                     + "http://sysredcartagena.duckdns.org:8081/descargarfactura/" + factura.getId());
                 }
@@ -280,16 +285,16 @@ public class FacturaController extends Thread {
                     e.printStackTrace();
                 }
                 String nombres = factura.getCliente().getNombres() + ' ' + factura.getCliente().getApellidos();
-                String body = "Estimado(a) Cliente " + nombres
-                        + " se ha generado una nueva factura a su nombre Gracias por su Preferencia";
+                String body = ESTIMADO_A_CLIENTE + nombres
+                        + SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA;
                 String email = factura.getCliente().getEmail();
                 String tel = factura.getCliente().getTelefono();
                 mailService.sendEmailAttachment("Llegó tu factura de Internet!", body,
-                        "administracion@tecnowisp.com.co", email, true, new File(client + ".pdf"));
+                        ADMINISTRACION_TECNOWISP_COM_CO, email, true, new File(client + ".pdf"));
 
                 if (tel.length() == 10) {
                     smsService.enviarSMS(factura.getCliente().getTelefono(),
-                            "Estimado(a) " + factura.getCliente().getNombres()
+                            ESTIMADO_A + factura.getCliente().getNombres()
                                     + " se ha generado una nueva factura de su servicio de Internet "
                                     + " descargar -->: http://sysredcartagena.duckdns.org:8081/descargarfactura/"
                                     + factura.getId());

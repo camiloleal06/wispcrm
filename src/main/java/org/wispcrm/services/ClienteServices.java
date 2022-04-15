@@ -1,6 +1,7 @@
 package org.wispcrm.services;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,71 +14,61 @@ import org.wispcrm.modelo.Cliente;
 import org.wispcrm.modelo.ClienteDTO;
 import org.wispcrm.modelo.Factura;
 
-
-@Service 
+@Service
 public class ClienteServices implements InterfaceClienteService {
 
-	@Autowired
-	private InterfaceClientes clienteDao;
-	
-	@Autowired
-	private ClienteRepository clienteRepo;
-	
-	@Autowired
-	private InterfaceFacturas facturaDao;
+    @Autowired
+    private InterfaceClientes clienteDao;
 
-	@Override
-	public List<Cliente> findAll() {
-		// TODO Auto-generated method stub
-		return (List<Cliente>) clienteDao.findAll();
-	}
+    @Autowired
+    private ClienteRepository clienteRepo;
 
+    @Autowired
+    private InterfaceFacturas facturaDao;
 
-	@Override
-	public Page<Cliente> findAll(Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public List<Cliente> findAll() {
+        return (List<Cliente>) clienteDao.findAll();
+    }
 
-	@Override
-	public void save(Cliente cliente) {
-		clienteDao.save(cliente);
+    @Override
+    public Page<Cliente> findAll(Pageable pageable) {
+        return null;
+    }
 
-	}
+    @Override
+    public void save(Cliente cliente) {
+        clienteDao.save(cliente);
 
-	@Override
-	public Cliente findOne(Integer id) {
-		// TODO Auto-generated method stub
-		return clienteDao.findById(id).orElse(null);
-	}
+    }
 
-	@Override
-	public void delete(Integer id) {
-     clienteDao.deleteById(id);
-	}
+    @Override
+    public Cliente findOne(Integer id) {
+        return clienteDao.findById(id).orElse(null);
+    }
 
-	@Override
-	public void saveFactura(Factura factura) {
-	
-		facturaDao.save(factura);
-		
-	}
+    @Override
+    public void delete(Integer id) {
+        clienteDao.deleteById(id);
+    }
 
+    @Override
+    public void saveFactura(Factura factura) {
 
-	@Override
-	public List<ClienteDTO> listaClientes() {
-		// TODO Auto-generated method stub
-	return clienteRepo.lista();
-	
-	}
+        facturaDao.save(factura);
 
+    }
 
-	@Override
-	public Page<ClienteDTO> lista(Pageable pageable) {
-		// TODO Auto-generated method stub
-		return clienteRepo.lista(pageable);
-	}
-	
+    @Override
+    public List<ClienteDTO> listaClientes() {
 
+        return clienteRepo.lista();
+
+    }
+
+    @Override
+    public Page<ClienteDTO> lista(Pageable pageable) {
+        return clienteRepo.lista(pageable);
+    }
 
 }

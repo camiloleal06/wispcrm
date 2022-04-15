@@ -15,13 +15,13 @@ import org.wispcrm.modelo.Plan;
 public class PlanController {
 
     @Autowired
-    private InterfacePlanService PlanDao;
+    private InterfacePlanService planDao;
     private static final String LISTAR_PLAN = "plan/listaPlan";
     private static final String VER_FORM_PLAN = "plan/formPlan";
 
     @RequestMapping(value = "/listarplanes")
     public String listarfactura(Model modelo) {
-        List<Plan> plan = PlanDao.findAll();
+        List<Plan> plan = planDao.findAll();
         modelo.addAttribute("listaplan", plan);
         return LISTAR_PLAN;
     }
@@ -36,8 +36,8 @@ public class PlanController {
 
     @PostMapping("/saveplan")
     public String savePlan(Plan plan, Model modelo) {
-        PlanDao.save(plan);
-        List<Plan> listaplan = PlanDao.findAll();
+        planDao.save(plan);
+        List<Plan> listaplan = planDao.findAll();
         modelo.addAttribute("listaplan", listaplan);
         return "redirect:/listar";
 

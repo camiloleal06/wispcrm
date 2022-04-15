@@ -123,15 +123,12 @@ public class FacturaController extends Thread {
 		factura.setEstado(false);
 		pagosDAO.save(pago);
 		FacturaD.save(factura);
-		/// int idfactura = factura.getId();
-		try {
+	   try {
 			reporte.PagoPdfReport(factura.getId(), pago.getId() + "_" + factura.getCliente().getNombres() + ".pdf");
 
 		} catch (JRException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		smsService.enviarSMS(factura.getCliente().getTelefono(),
 				"Estimado(a) " + factura.getCliente().getNombres() + " hemos recibido su pago "
 						+ " http://sysredcartagena.duckdns.org:8888/descargarpago/" + factura.getId());
@@ -153,7 +150,7 @@ public class FacturaController extends Thread {
 			factura.setNotificacion(factura.getNotificacion() + 1);
 			FacturaD.save(factura);
 			smsService.enviarSMS(telefono,
-					"SYSRED INFORMA: Mantenimiento en nuestra red el día 21-07-2021 entre 8 y 11pm, por lo cual no brindaremos el servicio, ofrecemos disculpas.");
+					"No hemos recibido su pago del mes de Internet actual.");
 			flash.addFlashAttribute("info", "El mensaje ha sido enviado a : " + telefono);
 			status.setComplete();
 		}
@@ -185,8 +182,7 @@ public class FacturaController extends Thread {
 
 	@PostMapping("/savefactura")
 	public String facturar(@Validated Factura factura,
-
-			RedirectAttributes flash, BindingResult result) throws SQLException {
+		RedirectAttributes flash, BindingResult result) throws SQLException {
 		Calendar fechavencimiento = Calendar.getInstance();
 		fechavencimiento.setTime(new Date());
 		int diapago = factura.getCliente().getDiapago();
@@ -196,7 +192,7 @@ public class FacturaController extends Thread {
 		factura.setFechavencimiento(fechavencimiento.getTime());
 		factura.setValor(factura.getCliente().getPlanes().getPrecio());
 		factura.setNotificacion(0);
-		factura.setPeriodo(LocalDate.now().getMonthValue());
+		factura.setPeriodo(LocalDate.now().getMonthValue()+1);
 
 		datacliente.saveFactura(factura);
 		String nombres = factura.getCliente().getNombres() + ' ' + factura.getCliente().getApellidos();
@@ -248,7 +244,7 @@ public class FacturaController extends Thread {
 				factura.setFechavencimiento(fechavencimiento.getTime());
 				factura.setValor(cliente.get(x).getPlanes().getPrecio());
 				factura.setNotificacion(0);
-				factura.setPeriodo(LocalDate.now().getMonthValue());
+				factura.setPeriodo(LocalDate.now().getMonthValue()+1);
 				FacturaD.save(factura);
 				sum = sum + 1;
 				int id = factura.getId();

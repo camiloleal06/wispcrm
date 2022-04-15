@@ -8,13 +8,13 @@ import org.wispcrm.interfaceService.InterfaceClienteService;
 import org.wispcrm.modelo.Cliente;
 
 @RestController
-public class getFactura {
-	
-	@Autowired
-	InterfaceClienteService ClienteDao;
+public class GetFactura {
 
-	@GetMapping("/getFactura")
-	public Cliente getFact(@RequestParam(name="id") Integer id) {
-		return ClienteDao.findOne(id);
-	}
+    @Autowired
+    InterfaceClienteService clienteDao;
+
+    @GetMapping("/getFactura")
+    public Cliente getFact(@RequestParam(name = "id") Integer id) {
+        return clienteDao.findOne(id);
+    }
 }

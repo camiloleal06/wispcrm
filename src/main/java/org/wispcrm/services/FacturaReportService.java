@@ -43,7 +43,7 @@ public class FacturaReportService {
     private JdbcTemplate jdbcTemplate;
 
     @Transactional
-    public JasperPrint DescargarPdfFile(Integer id) throws JRException, IOException {
+    public JasperPrint descargarPdfFile(Integer id) throws JRException, IOException {
         InputStream stream = this.getClass().getResourceAsStream(invoice_template);
         JasperReport report = JasperCompileManager.compileReport(stream);
         Map<String, Object> parameters = new HashMap<>();
@@ -60,7 +60,7 @@ public class FacturaReportService {
     }
 
     @Transactional
-    public JasperPrint DescargarPagoFile(Integer id) throws JRException {
+    public JasperPrint descargarPagoFile(Integer id) throws JRException {
         InputStream stream = this.getClass().getResourceAsStream(recibo_template);
         JasperReport report = JasperCompileManager.compileReport(stream);
         Map<String, Object> parameters = new HashMap<>();

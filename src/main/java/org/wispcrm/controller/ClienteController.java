@@ -39,7 +39,7 @@ public class ClienteController {
     private static final String VER_FORM_CLIENTE = "cliente/formCliente";
 
     @Autowired
-    private InterfacePlanService PlanDao;
+    private InterfacePlanService planDao;
 
     @Autowired
     private EnviarSMS smsService;
@@ -89,7 +89,7 @@ public class ClienteController {
     public String crear(Model modelo) throws Exception {
         Cliente cliente = new Cliente();
         modelo.addAttribute(CLIENTE2, cliente);
-        modelo.addAttribute("listaplan", PlanDao.findAll());
+        modelo.addAttribute("listaplan", planDao.findAll());
         modelo.addAttribute(TITULO, "Nuevo Cliente");
 
         return VER_FORM_CLIENTE;
@@ -152,7 +152,7 @@ public class ClienteController {
             return REDIRECT_LISTAR;
         }
         modelo.addAttribute(CLIENTE2, cliente);
-        modelo.addAttribute("listaplan", PlanDao.findAll());
+        modelo.addAttribute("listaplan", planDao.findAll());
         modelo.addAttribute(TITULO, "Actualizar Cliente");
         return VER_FORM_CLIENTE;
 

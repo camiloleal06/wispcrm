@@ -47,6 +47,8 @@ import net.sf.jasperreports.engine.JasperPrint;
 @SessionAttributes("factura")
 public class FacturaController {
 
+    private static final String LLEGÓ_TU_FACTURA_DE_INTERNET = "Llegó tu factura de Internet!";
+    private static final String SE_HA_GENERADO_UNA_NUEVA_FACTURA_DE_SU_SERVICIO_DE_INTERNET = " se ha generado una nueva factura de su servicio de Internet ";
     private static final String ADMINISTRACION_TECNOWISP_COM_CO = "administracion@tecnowisp.com.co";
     private static final String ESTIMADO_A_CLIENTE = "Estimado(a) Cliente ";
     private static final String SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA = " se ha generado una nueva factura a su nombre Gracias por su Preferencia";
@@ -210,9 +212,9 @@ public class FacturaController {
 
         smsService.enviarSMS(factura.getCliente().getTelefono(),
                 ESTIMADO_A + factura.getCliente().getNombres()
-                        + " se ha generado una nueva factura de su servicio de Internet "
+                        + SE_HA_GENERADO_UNA_NUEVA_FACTURA_DE_SU_SERVICIO_DE_INTERNET
                         + " http://sysredcartagena.duckdns.org:8081/descargarfactura/" + factura.getId());
-        mailService.sendEmailAttachment("Llegó tu factura de Internet!", body, ADMINISTRACION_TECNOWISP_COM_CO, email,
+        mailService.sendEmailAttachment(LLEGÓ_TU_FACTURA_DE_INTERNET, body, ADMINISTRACION_TECNOWISP_COM_CO, email,
                 true, new File(client + ".pdf"));
         flash.addFlashAttribute("info", "Se ha generado una factura a " + factura.getCliente().getNombres() + " "
                 + factura.getCliente().getApellidos() + " correctamente");
@@ -220,8 +222,7 @@ public class FacturaController {
     }
 
     @GetMapping("/facturar")
-    public String facturarEnLote(@Validated Factura facturas, RedirectAttributes flash, BindingResult result,
-            Model modelo) {
+    public String facturarEnLote(RedirectAttributes flash, BindingResult result, Model modelo) {
         Calendar fechaactual = Calendar.getInstance();
         Calendar fechavencimiento = Calendar.getInstance();
         int diaactual = fechaactual.get(Calendar.DAY_OF_MONTH);
@@ -257,12 +258,12 @@ public class FacturaController {
                         + SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA;
                 String email = factura.getCliente().getEmail();
                 String tel = factura.getCliente().getTelefono();
-                mailService.sendEmailAttachment("Llegó tu factura de Internet!", body,
-                        ADMINISTRACION_TECNOWISP_COM_CO, email, true, new File(client + ".pdf"));
+                mailService.sendEmailAttachment(LLEGÓ_TU_FACTURA_DE_INTERNET, body, ADMINISTRACION_TECNOWISP_COM_CO,
+                        email, true, new File(client + ".pdf"));
                 if (tel.length() == 10) {
                     smsService.enviarSMS(factura.getCliente().getTelefono(),
                             ESTIMADO_A + factura.getCliente().getNombres()
-                                    + " se ha generado una nueva factura de su servicio de Internet "
+                                    + SE_HA_GENERADO_UNA_NUEVA_FACTURA_DE_SU_SERVICIO_DE_INTERNET
                                     + "http://sysredcartagena.duckdns.org:8081/descargarfactura/" + factura.getId());
                 }
             } else if (cliente.get(x).getDiapago() >= 11 && diaactual < 25) {
@@ -289,13 +290,13 @@ public class FacturaController {
                         + SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA;
                 String email = factura.getCliente().getEmail();
                 String tel = factura.getCliente().getTelefono();
-                mailService.sendEmailAttachment("Llegó tu factura de Internet!", body,
-                        ADMINISTRACION_TECNOWISP_COM_CO, email, true, new File(client + ".pdf"));
+                mailService.sendEmailAttachment(LLEGÓ_TU_FACTURA_DE_INTERNET, body, ADMINISTRACION_TECNOWISP_COM_CO,
+                        email, true, new File(client + ".pdf"));
 
                 if (tel.length() == 10) {
                     smsService.enviarSMS(factura.getCliente().getTelefono(),
                             ESTIMADO_A + factura.getCliente().getNombres()
-                                    + " se ha generado una nueva factura de su servicio de Internet "
+                                    + SE_HA_GENERADO_UNA_NUEVA_FACTURA_DE_SU_SERVICIO_DE_INTERNET
                                     + " descargar -->: http://sysredcartagena.duckdns.org:8081/descargarfactura/"
                                     + factura.getId());
                 }
@@ -316,10 +317,11 @@ public class FacturaController {
         Factura factura = FacturaDao.findFacturabyid(id);
         if (factura != null) {
             response.setContentType("application/pdf");
-            response.setHeader("Content-Disposition", String.format("attachment; filename=" + factura.getId() + "_"
-                    + factura.getCliente().getNombres() + "_" + factura.getCliente().getApellidos() + ".pdf"));
+            response.setHeader("Content-Disposition", "attachment; filename=" + factura.getId() + "_"
+                    + factura.getCliente().getNombres() + "_" + factura.getCliente().getApellidos() + ".pdf");
+
             OutputStream out = response.getOutputStream();
-            JasperPrint jasperPrint = reporte.DescargarPdfFile(factura.getId());
+            JasperPrint jasperPrint = reporte.descargarPdfFile(factura.getId());
             JasperExportManager.exportReportToPdfStream(jasperPrint, out);
         }
 
@@ -330,12 +332,11 @@ public class FacturaController {
             HttpServletResponse response) throws IOException, SQLException, JRException {
         Factura factura = FacturaDao.findFacturabyid(id);
         if (factura != null) {
-            JasperPrint jasperPrint = null;
             response.setContentType("application/pdf");
-            response.setHeader("Content-Disposition", String.format(
-                    "attachment; filename=" + factura.getId() + "_" + factura.getCliente().getNombres() + ".pdf"));
+            response.setHeader("Content-Disposition",
+                    "attachment; filename=" + factura.getId() + "_" + factura.getCliente().getNombres() + ".pdf");
             OutputStream out = response.getOutputStream();
-            jasperPrint = reporte.DescargarPagoFile(factura.getId());
+            JasperPrint jasperPrint = reporte.descargarPagoFile(factura.getId());
             JasperExportManager.exportReportToPdfStream(jasperPrint, out);
         }
 

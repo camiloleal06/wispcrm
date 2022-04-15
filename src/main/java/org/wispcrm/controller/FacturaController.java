@@ -82,8 +82,7 @@ public class FacturaController extends Thread {
     private static final String LISTAR_PAGO = "factura/listaPago";
 
     @RequestMapping(value = "/factura")
-    public String crear(@RequestParam(name = "clienteID") Integer clienteID, Model modelo, RedirectAttributes flash)
-            throws JRException {
+    public String crear(@RequestParam(name = "clienteID") Integer clienteID, Model modelo, RedirectAttributes flash) {
         Cliente cliente = dataCliente.findOne(clienteID);
         if (cliente == null) {
             flash.addFlashAttribute("error", "El cliente no existe en la Base de datos");
@@ -179,8 +178,7 @@ public class FacturaController extends Thread {
     }
 
     @PostMapping("/savefactura")
-    public String facturar(@Validated Factura factura, RedirectAttributes flash, BindingResult result)
-            throws SQLException {
+    public String facturar(@Validated Factura factura, RedirectAttributes flash, BindingResult result) {
         Calendar fechavencimiento = Calendar.getInstance();
         fechavencimiento.setTime(new Date());
         int diapago = factura.getCliente().getDiapago();
@@ -205,7 +203,6 @@ public class FacturaController extends Thread {
             e.printStackTrace();
         }
 
-        // SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         smsService.enviarSMS(factura.getCliente().getTelefono(),
                 "Estimado(a) " + factura.getCliente().getNombres()
                         + " se ha generado una nueva factura de su servicio de Internet "
@@ -218,9 +215,8 @@ public class FacturaController extends Thread {
     }
 
     @GetMapping("/facturar")
-    public String facturarporlote(@Validated Factura facturas, RedirectAttributes flash, BindingResult result,
+    public String facturarEnLote(@Validated Factura facturas, RedirectAttributes flash, BindingResult result,
             Model modelo) {
-        /// SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         Calendar fechaactual = Calendar.getInstance();
         Calendar fechavencimiento = Calendar.getInstance();
         int diaactual = fechaactual.get(Calendar.DAY_OF_MONTH);
@@ -277,7 +273,6 @@ public class FacturaController extends Thread {
                 sum = sum + 1;
                 int id = factura.getId();
                 String client = factura.getCliente().getIdentificacion();
-
                 try {
                     reporte.createPdfReport(id, client + ".pdf");
 
@@ -312,15 +307,14 @@ public class FacturaController extends Thread {
 
     @GetMapping("/descargarfactura/{id}")
     public void descargarfactura(@PathVariable(value = "id") Integer id, RedirectAttributes flash,
-            HttpServletResponse response) throws IOException, SQLException, JRException {
+            HttpServletResponse response) throws IOException, JRException {
         Factura factura = FacturaDao.findFacturabyid(id);
         if (factura != null) {
-            JasperPrint jasperPrint = null;
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", String.format("attachment; filename=" + factura.getId() + "_"
                     + factura.getCliente().getNombres() + "_" + factura.getCliente().getApellidos() + ".pdf"));
             OutputStream out = response.getOutputStream();
-            jasperPrint = reporte.DescargarPdfFile(factura.getId());
+            JasperPrint jasperPrint = reporte.DescargarPdfFile(factura.getId());
             JasperExportManager.exportReportToPdfStream(jasperPrint, out);
         }
 
@@ -346,7 +340,6 @@ public class FacturaController extends Thread {
     public String listarpago(Model modelo) {
         List<PagoDTO> pago = pagosD.lista();
         modelo.addAttribute("listapagos", pago);
-        System.out.println(pago);
         return LISTAR_PAGO;
     }
 }

@@ -16,32 +16,32 @@ import org.wispcrm.modelo.Cliente;
 
 @Controller
 public class HomeController {
-	@Autowired
-	InterfaceClienteService ClienteDao;
+    @Autowired
+    InterfaceClienteService clienteDao;
 
-	@Autowired
-	private InterfaceFacturas facturaD;
-	
-	@Autowired
-	InterfaceClientes clientedao1;
-	
-	@Autowired
-	InterfacePagos pagosDao;
-	
-	@GetMapping("/")
-	public String home(Model modelo) {
-	   List<Cliente> cliente=ClienteDao.findAll();
+    @Autowired
+    private InterfaceFacturas facturaD;
 
-       modelo.addAttribute("numeroclientes",cliente.size());
-	   modelo.addAttribute("numerofacturas",facturaD.findFacturaByEstado(true).size());
-	   modelo.addAttribute("cantidad",FormatearMoneda(facturaD.Pendientes()));
-	   modelo.addAttribute("pagadas",FormatearMoneda(facturaD.Pagadas()));
-	   return "home";
-	}
+    @Autowired
+    InterfaceClientes clientedao1;
 
-	private Object FormatearMoneda(Long Numero){
-		Locale locale = new Locale("es", "CO");
-		NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(locale);
-		return currencyFormatter.format(Numero.doubleValue());
-	}
+    @Autowired
+    InterfacePagos pagosDao;
+
+    @GetMapping("/")
+    public String home(Model modelo) {
+        List<Cliente> cliente = clienteDao.findAll();
+
+        modelo.addAttribute("numeroclientes", cliente.size());
+        modelo.addAttribute("numerofacturas", facturaD.findFacturaByEstado(true).size());
+        modelo.addAttribute("cantidad", formatearMoneda(facturaD.Pendientes()));
+        modelo.addAttribute("pagadas", formatearMoneda(facturaD.Pagadas()));
+        return "home";
+    }
+
+    private Object formatearMoneda(Long numero) {
+        Locale locale = new Locale("es", "CO");
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(locale);
+        return currencyFormatter.format(numero.doubleValue());
+    }
 }

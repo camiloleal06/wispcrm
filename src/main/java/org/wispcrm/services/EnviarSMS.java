@@ -49,7 +49,7 @@ try {
  response = httpClient.execute(post);
  String resp = EntityUtils.toString(response.getEntity());
  if (response.getStatusLine().getStatusCode()!=200){
-   System.out.println("ERROR: C�digo de error HTTP:  " + response.getStatusLine().getStatusCode());
+   System.out.println("ERROR: Codigo de error HTTP:  " + response.getStatusLine().getStatusCode());
    System.out.println("Compruebe que ha configurado correctamente la direccion/url ");
    System.out.println("suministrada por Altiria");
    return;

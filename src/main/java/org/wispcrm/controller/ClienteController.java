@@ -29,6 +29,9 @@ import org.wispcrm.services.EnviarSMS;
 @Controller
 
 public class ClienteController {
+    private static final String CLASE = "clase";
+    private static final String SUCCESS = "success";
+    private static final String ERROR = "error";
     private static final String WARNING = "warning";
     private static final String REDIRECT_LISTAR = "redirect:/listar";
     private static final String REDIRECT_FORM = "redirect:/form";
@@ -63,12 +66,11 @@ public class ClienteController {
     }
 
     @GetMapping(value = "/vercliente")
-    public String ver(@RequestParam(name = "id") Integer id, Map<String, Object> model, RedirectAttributes flash)
-            throws Exception {
+    public String ver(@RequestParam(name = "id") Integer id, Map<String, Object> model, RedirectAttributes flash) {
 
         Cliente cliente = clienteDao.findOne(id);
         if (cliente == null) {
-            flash.addFlashAttribute("error", "El cliente no existe en la base de datos");
+            flash.addFlashAttribute(ERROR, "El cliente no existe en la base de datos");
             return REDIRECT_LISTAR;
         }
 
@@ -86,7 +88,7 @@ public class ClienteController {
     }
 
     @GetMapping("/form")
-    public String crear(Model modelo) throws Exception {
+    public String crear(Model modelo) {
         Cliente cliente = new Cliente();
         modelo.addAttribute(CLIENTE2, cliente);
         modelo.addAttribute("listaplan", planDao.findAll());
@@ -108,27 +110,25 @@ public class ClienteController {
             cliente.setCreateAt(new Date());
             clienteDao.save(cliente);
             status.setComplete();
-            flash.addFlashAttribute("success", "Cliente actualizado correctamente").addFlashAttribute("clase",
-                    "success");
+            flash.addFlashAttribute(SUCCESS, "Cliente actualizado correctamente").addFlashAttribute(CLASE, SUCCESS);
             return REDIRECT_LISTAR;
 
         } else {
             if (ic.findFirstClienteByIdentificacion(cliente.getIdentificacion()) != null) {
-                flash.addFlashAttribute("error", "Ya existe un cliente con esta Identificacion")
-                        .addFlashAttribute("clase", WARNING);
+                flash.addFlashAttribute(ERROR, "Ya existe un cliente con esta Identificacion").addFlashAttribute(CLASE,
+                        WARNING);
                 return REDIRECT_FORM;
 
             }
 
             else if (ic.findFirstClienteByTelefono(cliente.getTelefono()) != null) {
-                flash.addFlashAttribute("error", "Ya existe un cliente con este Telefonos").addFlashAttribute("clase",
+                flash.addFlashAttribute(ERROR, "Ya existe un cliente con este Telefonos").addFlashAttribute(CLASE,
                         WARNING);
                 return REDIRECT_FORM;
             }
 
             else if (ic.findFirstClienteByEmail(cliente.getEmail()) != null) {
-                flash.addFlashAttribute("error", "Ya existe un cliente con este email").addFlashAttribute("clase",
-                        WARNING);
+                flash.addFlashAttribute(ERROR, "Ya existe un cliente con este email").addFlashAttribute(CLASE, WARNING);
                 return REDIRECT_FORM;
 
             }
@@ -136,7 +136,7 @@ public class ClienteController {
             else {
                 clienteDao.save(cliente);
                 status.setComplete();
-                flash.addFlashAttribute("success", "Agregado correctamente").addFlashAttribute("clase", "success");
+                flash.addFlashAttribute(SUCCESS, "Agregado correctamente").addFlashAttribute(CLASE, SUCCESS);
                 return REDIRECT_LISTAR;
             }
 

@@ -72,7 +72,7 @@ public class FacturaController {
     private MailService mailService;
 
     @Autowired
-    private FacturaServices FacturaDao;
+    private FacturaServices facturaDao;
 
     @Autowired
     private EnviarSMS smsService;
@@ -81,7 +81,7 @@ public class FacturaController {
     private InterfaceFacturas facturaD;
 
     @Autowired
-    private InterfacePlanService PlanDao;
+    private InterfacePlanService planDao;
 
     private static final String VER_FORMULARIO_FACTURA = "factura/formFactura";
     private static final String LISTAR_CLIENTE = "cliente/listaCliente";
@@ -97,7 +97,7 @@ public class FacturaController {
         }
         Factura factura = new Factura();
         factura.setCliente(cliente);
-        modelo.addAttribute("listaplan", PlanDao.findOne(clienteID));
+        modelo.addAttribute("listaplan", planDao.findOne(clienteID));
         modelo.addAttribute("factura", factura);
         modelo.addAttribute("titulo", "Nueva Factura");
         return VER_FORMULARIO_FACTURA;
@@ -113,14 +113,14 @@ public class FacturaController {
 
     @GetMapping(value = "/listarfacturaid")
     public String verfac(@RequestParam(name = "id") Integer id, Model model) {
-        model.addAttribute("facturasid", FacturaDao.findFacturabyid(id));
+        model.addAttribute("facturasid", facturaDao.findFacturabyid(id));
         return LISTAR_FACTURA;
 
     }
 
     @GetMapping("/pagar/{id}")
     public String pagar(@PathVariable("id") int id, SessionStatus status, Model modelo, RedirectAttributes flash) {
-        Factura factura = FacturaDao.findFacturabyid(id);
+        Factura factura = facturaDao.findFacturabyid(id);
         Pago pago = new Pago();
         pago.setPago(factura.getValor());
         pago.setSaldo(0);
@@ -144,7 +144,7 @@ public class FacturaController {
 
     @GetMapping("/recordar/{id}")
     public String recordar(@PathVariable("id") int id, SessionStatus status, Model modelo, RedirectAttributes flash) {
-        Factura factura = FacturaDao.findFacturabyid(id);
+        Factura factura = facturaDao.findFacturabyid(id);
         String telefono = factura.getCliente().getTelefono();
         if (telefono.length() != 10) {
             flash.addFlashAttribute("error", "No se ha enviado el mensaje el numero de telefono es invalido ");
@@ -163,7 +163,7 @@ public class FacturaController {
 
     @GetMapping("/avisocorte/{id}")
     public String avisocorte(@PathVariable("id") int id, SessionStatus status, Model modelo, RedirectAttributes flash) {
-        Factura factura = FacturaDao.findFacturabyid(id);
+        Factura factura = facturaDao.findFacturabyid(id);
         factura.setEstado(true);
         facturaD.save(factura);
         smsService.enviarSMS(factura.getCliente().getTelefono(), ESTIMADO_A + factura.getCliente().getNombres()
@@ -176,7 +176,7 @@ public class FacturaController {
     @GetMapping("/eliminarfactura/{id}")
     public String eliminarfactura(@PathVariable("id") int id, SessionStatus status, Model modelo,
             RedirectAttributes flash) {
-        Factura f = FacturaDao.findFacturabyid(id);
+        Factura f = facturaDao.findFacturabyid(id);
         f.setEstado(false);
         facturaD.deleteById(id);
         flash.addFlashAttribute("warning", "Cliente Eliminado con exito");
@@ -314,7 +314,7 @@ public class FacturaController {
     @GetMapping("/descargarfactura/{id}")
     public void descargarfactura(@PathVariable(value = "id") Integer id, RedirectAttributes flash,
             HttpServletResponse response) throws IOException, JRException {
-        Factura factura = FacturaDao.findFacturabyid(id);
+        Factura factura = facturaDao.findFacturabyid(id);
         if (factura != null) {
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment; filename=" + factura.getId() + "_"
@@ -330,7 +330,7 @@ public class FacturaController {
     @GetMapping("/descargarpago/{id}")
     public void descargarpago(@PathVariable(value = "id") Integer id, RedirectAttributes flash,
             HttpServletResponse response) throws IOException, SQLException, JRException {
-        Factura factura = FacturaDao.findFacturabyid(id);
+        Factura factura = facturaDao.findFacturabyid(id);
         if (factura != null) {
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition",

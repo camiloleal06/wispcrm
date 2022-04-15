@@ -119,8 +119,7 @@ public class FacturaController {
     }
 
     @GetMapping("/pagar/{id}")
-    public String pagar(@PathVariable("id") int id, SessionStatus status, Model modelo, RedirectAttributes flash)
-            throws SQLException {
+    public String pagar(@PathVariable("id") int id, SessionStatus status, Model modelo, RedirectAttributes flash) {
         Factura factura = facturaDao.findFacturabyid(id);
         Pago pago = new Pago();
         pago.setPago(factura.getValor());

@@ -19,12 +19,10 @@ public class FacturaCompra {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;	
-	
 	@Column(name = "estado")
     private boolean estado;
-	
 	@Column(name = "create_at")
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern="yyyy-MM-dd")
-	private Date CreateAt;
+	private Date createAt;
 }

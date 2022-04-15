@@ -32,7 +32,7 @@ public class Factura {
 	@Column(name = "create_at")
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern="yyyy-MM-dd")
-	private Date CreateAt;
+	private Date createAt;
 	
     @Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern="yyyy-MM-dd")
@@ -52,7 +52,7 @@ public class Factura {
 	
 	@PrePersist
 	public void prePersist() {
-		CreateAt=new Date();
+		createAt =new Date();
 		estado=true;
 		
 	}
@@ -74,11 +74,11 @@ public class Factura {
 	}
 
 	public Date getCreateAt() {
-		return CreateAt;
+		return createAt;
 	}
 
 	public void setCreateAt(Date createAt) {
-		CreateAt = createAt;
+		this.createAt = createAt;
 	}
 
 	public Date getFechapago() {

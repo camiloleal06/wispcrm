@@ -54,10 +54,10 @@ public class FacturaController extends Thread {
 	private InterfacePagos pagosD;
 
 	@Autowired
-	private ClienteServices datacliente;
+	private ClienteServices dataCliente;
 
 	@Autowired
-	InterfaceClienteService ClienteDao;
+	InterfaceClienteService clienteDao;
 
 	@Autowired
 	FacturaReportService reporte;
@@ -72,20 +72,20 @@ public class FacturaController extends Thread {
 	private EnviarSMS smsService;
 
 	@Autowired
-	private InterfaceFacturas FacturaD;
+	private InterfaceFacturas facturaD;
 
 	@Autowired
 	private InterfacePlanService PlanDao;
 
-	final private String VER_FORMULARIO_FACTURA = "factura/formFactura";
-	final private String LISTAR_CLIENTE = "cliente/listaCliente";
-	final private String LISTAR_FACTURA = "factura/listaFactura";
-	final private String LISTAR_PAGO = "factura/listaPago";
+	final private static VER_FORMULARIO_FACTURA = "factura/formFactura";
+	final private static String LISTAR_CLIENTE = "cliente/listaCliente";
+	final private static LISTAR_FACTURA = "factura/listaFactura";
+	final private static LISTAR_PAGO = "factura/listaPago";
 
 	@RequestMapping(value = "/factura")
 	public String crear(@RequestParam(name = "clienteID") Integer clienteID, Model modelo, RedirectAttributes flash)
 			throws JRException {
-		Cliente cliente = datacliente.findOne(clienteID);
+		Cliente cliente = dataCliente.findOne(clienteID);
 		if (cliente == null) {
 			flash.addFlashAttribute("error", "El cliente no existe en la Base de datos");
 			return LISTAR_CLIENTE;
@@ -101,7 +101,7 @@ public class FacturaController extends Thread {
 
 	@RequestMapping(value = "/listarfactura")
 	public String listarfactura(Model modelo) {
-		List<Factura> factura = FacturaD.findFacturaByEstado(true);
+		List<Factura> factura = facturaD.findFacturaByEstado(true);
 		modelo.addAttribute("listafactura", factura);
 		return LISTAR_FACTURA;
 	}
@@ -122,7 +122,7 @@ public class FacturaController extends Thread {
 		pago.setFactura(factura);
 		factura.setEstado(false);
 		pagosDAO.save(pago);
-		FacturaD.save(factura);
+		facturaD.save(factura);
 	   try {
 			reporte.PagoPdfReport(factura.getId(), pago.getId() + "_" + factura.getCliente().getNombres() + ".pdf");
 
@@ -148,7 +148,7 @@ public class FacturaController extends Thread {
 
 		else {
 			factura.setNotificacion(factura.getNotificacion() + 1);
-			FacturaD.save(factura);
+			facturaD.save(factura);
 			smsService.enviarSMS(telefono,
 					"No hemos recibido su pago del mes de Internet actual.");
 			flash.addFlashAttribute("info", "El mensaje ha sido enviado a : " + telefono);
@@ -161,7 +161,7 @@ public class FacturaController extends Thread {
 	public String avisocorte(@PathVariable("id") int id, SessionStatus status, Model modelo, RedirectAttributes flash) {
 		Factura factura = FacturaDao.findFacturabyid(id);
 		factura.setEstado(true);
-		FacturaD.save(factura);
+		facturaD.save(factura);
 		smsService.enviarSMS(factura.getCliente().getTelefono(), "Estimado(a) " + factura.getCliente().getNombres()
 				+ " Usted cuenta con dos facturas vencidas, " + "su servicio de internet será suspendido Att. SYSRED");
 		flash.addFlashAttribute("info", "El mensaje ha sido enviado a : " + factura.getCliente().getTelefono());
@@ -174,7 +174,7 @@ public class FacturaController extends Thread {
 			RedirectAttributes flash) {
 		Factura f = FacturaDao.findFacturabyid(id);
 		f.setEstado(false);
-		FacturaD.deleteById(id);
+		facturaD.deleteById(id);
 		flash.addFlashAttribute("warning", "Cliente Eliminado con exito");
 		status.setComplete();
 		return "redirect:/listarfactura";
@@ -194,7 +194,7 @@ public class FacturaController extends Thread {
 		factura.setNotificacion(0);
 		factura.setPeriodo(LocalDate.now().getMonthValue()+1);
 
-		datacliente.saveFactura(factura);
+		dataCliente.saveFactura(factura);
 		String nombres = factura.getCliente().getNombres() + ' ' + factura.getCliente().getApellidos();
 		String body = "Estimado(a) Cliente " + nombres
 				+ " se ha generado una nueva factura a su nombre Gracias por su Preferencia";
@@ -204,7 +204,6 @@ public class FacturaController extends Thread {
 			reporte.createPdfReport(id, client + ".pdf");
 
 		} catch (JRException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -229,7 +228,7 @@ public class FacturaController extends Thread {
 		Calendar fechaactual = Calendar.getInstance();
 		Calendar fechavencimiento = Calendar.getInstance();
 		int diaactual = fechaactual.get(Calendar.DAY_OF_MONTH);
-		List<Cliente> cliente = ClienteDao.findAll();
+		List<Cliente> cliente = clienteDao.findAll();
 		int x = 0;
 		int sum = 0;
 		while (x < cliente.size()) {
@@ -245,7 +244,7 @@ public class FacturaController extends Thread {
 				factura.setValor(cliente.get(x).getPlanes().getPrecio());
 				factura.setNotificacion(0);
 				factura.setPeriodo(LocalDate.now().getMonthValue()+1);
-				FacturaD.save(factura);
+				facturaD.save(factura);
 				sum = sum + 1;
 				int id = factura.getId();
 				String client = factura.getCliente().getIdentificacion();
@@ -254,7 +253,6 @@ public class FacturaController extends Thread {
 					reporte.createPdfReport(id, client + ".pdf");
 
 				} catch (JRException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				String nombres = factura.getCliente().getNombres() + ' ' + factura.getCliente().getApellidos();
@@ -262,11 +260,8 @@ public class FacturaController extends Thread {
 						+ " se ha generado una nueva factura a su nombre Gracias por su Preferencia";
 				String email = factura.getCliente().getEmail();
 				String tel = factura.getCliente().getTelefono();
-				if (EmailisValid(email)) {
-					mailService.sendEmailAttachment("Llegó tu factura de Internet!", body,
+							mailService.sendEmailAttachment("Llegó tu factura de Internet!", body,
 							"administracion@tecnowisp.com.co", email, true, new File(client + ".pdf"));
-				}
-
 				if (tel.length() == 10) {
 					smsService.enviarSMS(factura.getCliente().getTelefono(),
 							"Estimado(a) " + factura.getCliente().getNombres()
@@ -283,7 +278,7 @@ public class FacturaController extends Thread {
 				factura.setValor(cliente.get(x).getPlanes().getPrecio());
 				factura.setNotificacion(0);
 				factura.setPeriodo(LocalDate.now().getMonthValue());
-				FacturaD.save(factura);
+				facturaD.save(factura);
 				sum = sum + 1;
 				int id = factura.getId();
 				String client = factura.getCliente().getIdentificacion();
@@ -292,7 +287,6 @@ public class FacturaController extends Thread {
 					reporte.createPdfReport(id, client + ".pdf");
 
 				} catch (JRException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				String nombres = factura.getCliente().getNombres() + ' ' + factura.getCliente().getApellidos();
@@ -300,7 +294,7 @@ public class FacturaController extends Thread {
 						+ " se ha generado una nueva factura a su nombre Gracias por su Preferencia";
 				String email = factura.getCliente().getEmail();
 				String tel = factura.getCliente().getTelefono();
-				if (EmailisValid(email)) {
+				if (emailisValid(email)) {
 					mailService.sendEmailAttachment("Llegó tu factura de Internet!", body,
 							"administracion@tecnowisp.com.co", email, true, new File(client + ".pdf"));
 				}
@@ -318,7 +312,7 @@ public class FacturaController extends Thread {
 		}
 
 		flash.addFlashAttribute("info", "Se han generado : " + sum + " facturas");
-		List<Cliente> clientes = ClienteDao.findAll();
+		List<Cliente> clientes = clienteDao.findAll();
 		modelo.addAttribute("cliente", clientes);
 		return "redirect:/listar";
 	}
@@ -361,16 +355,4 @@ public class FacturaController extends Thread {
 		System.out.println(pago);
 		return LISTAR_PAGO;
 	}
-	public boolean EmailisValid(String email) {
-		String emailFormate = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+(?:\\."
-				+ "[a-zA-Z0-9_!#$%&'*+/=?`{|}~^-]+)*@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$";
-
-		Pattern p = Pattern.compile(emailFormate);
-		if (email == null) {
-			return false;
-		}
-		return p.matcher(email).matches();
-	}
-	// Se ejecuta cada 3 segundos
-
 }

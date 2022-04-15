@@ -8,7 +8,6 @@ public class Funciones extends Conectar {
         super();
     }
 
-	         con.execute("/ip/firewall/address-list/add address="+ip+" list=Morosos comment="+comentario);//,80,32");
     public void addlistsuspendidos(String ip, String comentario) throws MikrotikApiException {
         connect();
         con.execute("/ip/firewall/address-list/add address=" + ip + " list=Morosos comment=" + comentario);

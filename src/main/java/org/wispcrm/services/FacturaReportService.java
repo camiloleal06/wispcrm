@@ -9,6 +9,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,115 +31,107 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 @Service
 public class FacturaReportService {
 
-    @Value("${invoice.logo.path}")
-    private String logo_path;
+    private static final String FACTURA_ID = "factura_id";
 
     @Value("${invoice.template.path}")
-    private String invoice_template;
+    private String invoiceTemplate;
 
     @Value("${recibo.template.path}")
-    private String recibo_template;
+    private String reciboTemplate;
 
     @Autowired
     @Qualifier("jdbcTemplate")
     private JdbcTemplate jdbcTemplate;
 
     @Transactional
-    public JasperPrint descargarPdfFile(Integer id) throws JRException, IOException {
-        InputStream stream = this.getClass().getResourceAsStream(invoice_template);
+    public JasperPrint descargarPdfFile(Integer id) throws JRException, SQLException {
+        InputStream stream = this.getClass().getResourceAsStream(invoiceTemplate);
         JasperReport report = JasperCompileManager.compileReport(stream);
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("factura_id", id);
-
-        try (Connection connection = jdbcTemplate.getDataSource().getConnection();) {
-            JasperPrint print = JasperFillManager.fillReport(report, parameters, connection);
-            return print;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-
+        Connection connection = null;
+        parameters.put(FACTURA_ID, id);
+        DataSource dataSource = jdbcTemplate.getDataSource();
+        if (null != dataSource)
+            connection = dataSource.getConnection();
+        return JasperFillManager.fillReport(report, parameters, connection);
     }
 
     @Transactional
     public JasperPrint descargarPagoFile(Integer id) throws JRException {
-        InputStream stream = this.getClass().getResourceAsStream(recibo_template);
+        InputStream stream = this.getClass().getResourceAsStream(reciboTemplate);
         JasperReport report = JasperCompileManager.compileReport(stream);
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("factura_id", id);
+        parameters.put(FACTURA_ID, id);
+        DataSource dataSource = jdbcTemplate.getDataSource();
+        if (dataSource != null) {
+            try (Connection connection = dataSource.getConnection();) {
+                return JasperFillManager.fillReport(report, parameters, connection);
+            } catch (SQLException e) {
 
-        try (Connection connection = jdbcTemplate.getDataSource().getConnection();) {
-            JasperPrint print = JasperFillManager.fillReport(report, parameters, connection);
-            return print;
-        } catch (SQLException e) {
-
-            e.printStackTrace();
+                e.printStackTrace();
+            }
         }
         return null;
 
     }
 
     public void createPdfReport(Integer id, String cliente) throws JRException {
-        final InputStream stream = this.getClass().getResourceAsStream(invoice_template);
+        final InputStream stream = this.getClass().getResourceAsStream(invoiceTemplate);
 
         JasperReport report = JasperCompileManager.compileReport(stream);
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("factura_id", id);
+        parameters.put(FACTURA_ID, id);
+        DataSource dataSource = jdbcTemplate.getDataSource();
+        if (dataSource != null) {
+            try (Connection connection = dataSource.getConnection();) {
+                JasperPrint print = JasperFillManager.fillReport(report, parameters, connection);
+                JasperExportManager.exportReportToPdfFile(print, cliente);
 
-        try (Connection connection = jdbcTemplate.getDataSource().getConnection();) {
-
-            JasperPrint print;
-            print = JasperFillManager.fillReport(report, parameters, connection);
-            JasperExportManager.exportReportToPdfFile(print, cliente);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
-    public void PagoPdfReport(Integer id, String cliente) throws JRException {
-        final InputStream stream = this.getClass().getResourceAsStream(recibo_template);
-
+    public void pagoPdfReport(Integer id, String cliente) throws JRException {
+        final InputStream stream = this.getClass().getResourceAsStream(reciboTemplate);
         JasperReport report = JasperCompileManager.compileReport(stream);
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("factura_id", id);
+        parameters.put(FACTURA_ID, id);
+        DataSource dataSource = jdbcTemplate.getDataSource();
+        if (dataSource != null) {
+            try (Connection connection = dataSource.getConnection();) {
+                JasperPrint print = JasperFillManager.fillReport(report, parameters, connection);
+                JasperExportManager.exportReportToPdfFile(print, cliente);
 
-        try (Connection connection = jdbcTemplate.getDataSource().getConnection();) {
-
-            JasperPrint print;
-            print = JasperFillManager.fillReport(report, parameters, connection);
-            JasperExportManager.exportReportToPdfFile(print, cliente);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-
     }
 
     public void generateInvoiceFor(Integer id) throws IOException {
-
         File pdfFile = File.createTempFile("my-invoice", ".pdf");
-
         try (FileOutputStream pos = new FileOutputStream(pdfFile)) {
             final JasperReport report = loadTemplate();
             final Map<String, Object> parameters = parameters(id);
             final JasperPrint print = JasperFillManager.fillReport(report, parameters, new Conexion().conectar());
             JasperExportManager.exportReportToPdfFile(print, "Factura.pdf");
         } catch (final Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+
         }
     }
 
     private Map<String, Object> parameters(Integer id) {
         final Map<String, Object> parameters = new HashMap<>();
-        parameters.put("factura_id", id);
+        parameters.put(FACTURA_ID, id);
         return parameters;
     }
 
     private JasperReport loadTemplate() throws JRException {
 
-        final InputStream reportInputStream = getClass().getResourceAsStream(invoice_template);
+        final InputStream reportInputStream = getClass().getResourceAsStream(invoiceTemplate);
         final JasperDesign jasperDesign = JRXmlLoader.load(reportInputStream);
 
         return JasperCompileManager.compileReport(jasperDesign);

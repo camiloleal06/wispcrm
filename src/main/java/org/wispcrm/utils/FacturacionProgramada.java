@@ -33,7 +33,6 @@ public class FacturacionProgramada {
 	
 	@Autowired
 	private MailService mailService;
-	//   @Scheduled(fixedRate = 86400000)
 	public void scheduleTaskWithFixedRate() throws SQLException {
 
 		Calendar fechaactual = Calendar.getInstance();
@@ -84,19 +83,7 @@ public class FacturacionProgramada {
 			}
 							
 			}
-		
-		
-
 	}
 
-	public void scheduleTaskWithFixedDelay() {
-	}
-
-	public void scheduleTaskWithInitialDelay() {
-	}
-
-	public void scheduleTaskWithCronExpression() {
-
-	}
 
 }

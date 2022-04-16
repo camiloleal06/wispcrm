@@ -191,7 +191,6 @@ public class FacturaController {
 
     @PostMapping("/savefactura")
     public String facturar(@Validated Factura factura, RedirectAttributes flash, BindingResult result) {
-        Calendar fechavencimiento = Calendar.getInstance();
         fechavencimiento.setTime(new Date());
         fechavencimiento.set(Calendar.DAY_OF_MONTH, factura.getCliente().getDiapago());
         String client = factura.getCliente().getIdentificacion();
@@ -248,12 +247,10 @@ public class FacturaController {
             response.setContentType("application/pdf");
             response.setHeader("Content-Disposition", "attachment; filename=" + factura.getId() + "_"
                     + factura.getCliente().getNombres() + "_" + factura.getCliente().getApellidos() + ".pdf");
-
             OutputStream out = response.getOutputStream();
             JasperPrint jasperPrint = reporte.descargarPdfFile(factura.getId());
             JasperExportManager.exportReportToPdfStream(jasperPrint, out);
         }
-
     }
 
     @GetMapping("/descargarpago/{id}")
@@ -268,7 +265,6 @@ public class FacturaController {
             JasperPrint jasperPrint = reporte.descargarPagoFile(factura.getId());
             JasperExportManager.exportReportToPdfStream(jasperPrint, out);
         }
-
     }
 
     @RequestMapping(value = "/listarpago")
@@ -289,6 +285,7 @@ public class FacturaController {
         factura.setPeriodo(LocalDate.now().getMonthValue() + periodo);
         return facturaD.save(factura);
     }
+
 
     private void send(Factura factura){
         int id = factura.getId();

@@ -64,7 +64,7 @@ public class FacturaReportService {
         parameters.put(FACTURA_ID, id);
         DataSource dataSource = jdbcTemplate.getDataSource();
         if (dataSource != null) {
-            try (Connection connection = dataSource.getConnection();) {
+            try (Connection connection = dataSource.getConnection()) {
                 return JasperFillManager.fillReport(report, parameters, connection);
             } catch (SQLException e) {
 
@@ -76,38 +76,11 @@ public class FacturaReportService {
     }
 
     public void createPdfReport(Integer id, String cliente) throws JRException {
-        final InputStream stream = this.getClass().getResourceAsStream(invoiceTemplate);
-
-        JasperReport report = JasperCompileManager.compileReport(stream);
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put(FACTURA_ID, id);
-        DataSource dataSource = jdbcTemplate.getDataSource();
-        if (dataSource != null) {
-            try (Connection connection = dataSource.getConnection();) {
-                JasperPrint print = JasperFillManager.fillReport(report, parameters, connection);
-                JasperExportManager.exportReportToPdfFile(print, cliente);
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+    report(id,cliente);
     }
 
     public void pagoPdfReport(Integer id, String cliente) throws JRException {
-        final InputStream stream = this.getClass().getResourceAsStream(reciboTemplate);
-        JasperReport report = JasperCompileManager.compileReport(stream);
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put(FACTURA_ID, id);
-        DataSource dataSource = jdbcTemplate.getDataSource();
-        if (dataSource != null) {
-            try (Connection connection = dataSource.getConnection();) {
-                JasperPrint print = JasperFillManager.fillReport(report, parameters, connection);
-                JasperExportManager.exportReportToPdfFile(print, cliente);
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
+      report(id,cliente);
     }
 
     public void generateInvoiceFor(Integer id) throws IOException {
@@ -135,5 +108,22 @@ public class FacturaReportService {
         final JasperDesign jasperDesign = JRXmlLoader.load(reportInputStream);
 
         return JasperCompileManager.compileReport(jasperDesign);
+    }
+
+    private void report(Integer id, String cliente) throws JRException{
+        final InputStream stream = this.getClass().getResourceAsStream(invoiceTemplate);
+        JasperReport report = JasperCompileManager.compileReport(stream);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put(FACTURA_ID, id);
+        DataSource dataSource = jdbcTemplate.getDataSource();
+        if (dataSource != null) {
+            try (Connection connection = dataSource.getConnection()) {
+                JasperPrint print = JasperFillManager.fillReport(report, parameters, connection);
+                JasperExportManager.exportReportToPdfFile(print, cliente);
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

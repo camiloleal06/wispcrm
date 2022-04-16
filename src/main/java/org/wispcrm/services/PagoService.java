@@ -19,14 +19,7 @@ public class PagoService implements InterfacePagoService {
 	
 	@Override
 	public List<Pago> findAll() {
-		// TODO Auto-generated method stub
 		return (List<Pago>) pagosDAO.findAll();
-	}
-
-	@Override
-	public Page<Pago> findAll(Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -37,13 +30,13 @@ public class PagoService implements InterfacePagoService {
 
 	@Override
 	public Pago findOne(Integer id) {
-		// TODO Auto-generated method stub
+
 		return pagosDAO.findById(id).orElse(null);
 	}
 
 	@Override
 	public void delete(Integer id) {
-		// TODO Auto-generated method stub
+
 		pagosDAO.deleteById(id);	
 	}
 

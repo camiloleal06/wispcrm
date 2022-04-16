@@ -19,33 +19,20 @@ public class PlanServices implements InterfacePlanService{
 	
 	@Override
 	public List<Plan> findAll() {
-		// TODO Auto-generated method stub
-		return (List<Plan>) planesDao.findAll(); 
+			return (List<Plan>) planesDao.findAll();
 	}
 
-	@Override
-	public Page<Plan> findAll(Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
+   @Override
 	public void save(Plan plan) {
-		// TODO Auto-generated method stub
-		planesDao.save(plan);
+			planesDao.save(plan);
 		
 	}
 
 	@Override
 	public Plan findOne(Integer id) {
-		// TODO Auto-generated method stub
+
 		return planesDao.findById(id).orElse(null);
 	}
 
-	@Override
-	public void delete(Integer id) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

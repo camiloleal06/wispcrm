@@ -10,11 +10,8 @@ public interface InterfacePlanService {
 	
 	public List<Plan> findAll();
 
-	public Page<Plan> findAll(Pageable pageable);
-
 	public void save(Plan plan);
 
 	public Plan findOne(Integer id);
 
-	public void delete(Integer id);
 }

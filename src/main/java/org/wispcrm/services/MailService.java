@@ -63,13 +63,12 @@ public class MailService {
 
 			mailSender.send(mimeMessage);
 
-			System.out.println("Email sending complete.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-    public void sendEMailWithAttach(String to, String subject, String body, String attachment) throws AddressException, MessagingException 
+    public void sendEMailWithAttach(String to, String attachment)	throws  MessagingException
     {
         MimeMessage message = mailSender.createMimeMessage();
 
@@ -77,12 +76,10 @@ public class MailService {
                 message.setFrom(new InternetAddress("sysredcartagena@gmail.com"));
                 message.setSubject("subject");
                 message.setText("body");
-
-             //   FileSystemResource file = new FileSystemResource(new File("C:\\Users"+attachment));
                 MimeMessageHelper helper = new MimeMessageHelper(message, true);
                 helper.addAttachment("attachment-document-name.jpg", new ClassPathResource(attachment));
 
-      
+
                 mailSender.send(message);
        
     }

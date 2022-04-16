@@ -8,9 +8,6 @@ import org.wispcrm.modelo.Pago;
 
 public interface InterfacePagoService {
 	public List<Pago> findAll();
-
-	public Page<Pago> findAll(Pageable pageable);
-
 	public void save(Pago pago);
 
 	public Pago findOne(Integer id);

@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.wispcrm.interfaceService.InterfacerfeFacturaService;
+import org.wispcrm.interfaceservice.InterfacerfeFacturaService;
 import org.wispcrm.interfaces.InterfaceFacturas;
 import org.wispcrm.modelo.Factura;
 

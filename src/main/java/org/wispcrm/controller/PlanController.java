@@ -8,7 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.wispcrm.interfaceService.InterfacePlanService;
+import org.wispcrm.interfaceservice.InterfacePlanService;
 import org.wispcrm.modelo.Plan;
 
 @Controller

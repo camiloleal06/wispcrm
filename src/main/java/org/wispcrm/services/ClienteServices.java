@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.wispcrm.interfaceService.InterfaceClienteService;
+import org.wispcrm.interfaceservice.InterfaceClienteService;
 import org.wispcrm.interfaces.ClienteRepository;
 import org.wispcrm.interfaces.InterfaceClientes;
 import org.wispcrm.interfaces.InterfaceFacturas;

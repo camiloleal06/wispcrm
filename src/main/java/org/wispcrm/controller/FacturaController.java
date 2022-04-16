@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.wispcrm.interfaceService.InterfaceClienteService;
-import org.wispcrm.interfaceService.InterfacePlanService;
+import org.wispcrm.interfaceservice.InterfaceClienteService;
+import org.wispcrm.interfaceservice.InterfacePlanService;
 import org.wispcrm.interfaces.InterfaceFacturas;
 import org.wispcrm.interfaces.InterfacePagos;
 import org.wispcrm.modelo.Cliente;
@@ -193,19 +193,12 @@ public class FacturaController {
     public String facturar(@Validated Factura factura, RedirectAttributes flash, BindingResult result) {
         fechavencimiento.setTime(new Date());
         fechavencimiento.set(Calendar.DAY_OF_MONTH, factura.getCliente().getDiapago());
-        String client = factura.getCliente().getIdentificacion();
         factura.setFechapago(fechavencimiento.getTime());
         factura.setFechavencimiento(fechavencimiento.getTime());
         factura.setValor(factura.getCliente().getPlanes().getPrecio());
         factura.setNotificacion(0);
         factura.setPeriodo(LocalDate.now().getMonthValue() + 1);
         dataCliente.saveFactura(factura);
-
-        String nombres = factura.getCliente().getNombres() + ' ' + factura.getCliente().getApellidos();
-        String body = ESTIMADO_A_CLIENTE + nombres
-                + SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA;
-        String email = factura.getCliente().getEmail();
-
         flash.addFlashAttribute("info", "Se ha generado una factura a " + factura.getCliente().getNombres() + " "
                 + factura.getCliente().getApellidos() + " correctamente");
         return "redirect:/listar";
@@ -214,7 +207,8 @@ public class FacturaController {
     @GetMapping("/facturar")
     public String facturarEnLote(RedirectAttributes flash, BindingResult result, Model modelo) {
         List<Cliente> cliente = clienteDao.findAll();
-        int x = 0;   int sum = 0;
+        int x = 0;
+        int sum = 0;
         while (x < cliente.size()) {
             Factura factura = new Factura();
             fechavencimiento.setTime(new Date());
@@ -255,7 +249,7 @@ public class FacturaController {
 
     @GetMapping("/descargarpago/{id}")
     public void descargarpago(@PathVariable(value = "id") Integer id, RedirectAttributes flash,
-            HttpServletResponse response) throws IOException, SQLException, JRException {
+            HttpServletResponse response) throws IOException, JRException {
         Factura factura = facturaDao.findFacturabyid(id);
         if (factura != null) {
             response.setContentType("application/pdf");

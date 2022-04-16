@@ -2,8 +2,8 @@ package org.wispcrm.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.wispcrm.interfaceService.InterfaceClienteService;
-import org.wispcrm.interfaceService.InterfacePlanService;
+import org.wispcrm.interfaceservice.InterfaceClienteService;
+import org.wispcrm.interfaceservice.InterfacePlanService;
 import org.wispcrm.interfaces.InterfaceFacturas;
 import org.wispcrm.modelo.Cliente;
 import org.wispcrm.modelo.Factura;

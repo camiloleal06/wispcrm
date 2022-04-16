@@ -1,4 +1,4 @@
-package org.wispcrm.interfaceService;
+package org.wispcrm.interfaceservice;
 
 import java.util.List;
 

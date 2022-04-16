@@ -79,7 +79,7 @@ public void setIpaddres(String ipaddres) {
 
 public Cliente() {
 
-facturas= new ArrayList<Factura>();
+facturas= new ArrayList<>();
 	
 }
 

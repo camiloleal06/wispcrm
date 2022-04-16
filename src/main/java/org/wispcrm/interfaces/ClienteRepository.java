@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.wispcrm.modelo.Cliente;
 import org.wispcrm.modelo.ClienteDTO;
-import org.wispcrm.modelo.PagoDTO;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     

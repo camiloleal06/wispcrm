@@ -1,8 +1,17 @@
-node {
-  stage('SCM') {
-    checkout scm
-  }
-  stage('Test') {
+pipeline {
+    agent any
+    
+    tools {
+        maven 'M3'
+    }
+    
+    stages {
+        stage('Build') {
+            steps {
+                sh 'mvn -B -DskipTests clean package'
+            }
+        }
+        stage('Test') {
             steps {
                 sh 'mvn test'
             }
@@ -12,10 +21,12 @@ node {
                 }
             }
         }
-  stage('SonarQube Analysis') {
-    def mvn = tool 'M3'; // Replace with Global Tool > Maven > Maven installations > Name
+        stage('SonarQube Analysis') {
+  //  def mvn = tool 'M3'; // Replace with Global Tool > Maven > Maven installations > Name
     withSonarQubeEnv() {
-      sh "${mvn}/bin/mvn sonar:sonar"
+      sh 'mvn sonar:sonar'
+   /// sh "${mvn}/bin/mvn sonar:sonar"
     }
   }
+}
 }

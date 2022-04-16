@@ -46,7 +46,6 @@ import net.sf.jasperreports.engine.JasperPrint;
 @Controller
 @SessionAttributes("factura")
 public class FacturaController {
-
     private static final String LLEGO_TU_FACTURA_DE_INTERNET = "Llegó tu factura de Internet!";
     private static final String SE_HA_GENERADO_UNA_NUEVA_FACTURA_DE_SU_SERVICIO_DE_INTERNET = " se ha generado una nueva factura de su servicio de Internet ";
     private static final String ADMINISTRACION_TECNOWISP_COM_CO = "administracion@tecnowisp.com.co";
@@ -83,13 +82,18 @@ public class FacturaController {
     @Autowired
     private InterfacePlanService planDao;
 
+    Calendar fechaactual = Calendar.getInstance();
+    Calendar fechavencimiento = Calendar.getInstance();
+    int diaactual = fechaactual.get(Calendar.DAY_OF_MONTH);
+
     private static final String VER_FORMULARIO_FACTURA = "factura/formFactura";
     private static final String LISTAR_CLIENTE = "cliente/listaCliente";
     private static final String LISTAR_FACTURA = "factura/listaFactura";
     private static final String LISTAR_PAGO = "factura/listaPago";
 
     @RequestMapping(value = "/factura")
-    public String crear(@RequestParam(name = "clienteID") Integer clienteID, Model modelo, RedirectAttributes flash) {
+    public String crear(@RequestParam(name = "clienteID") Integer clienteID,
+                        Model modelo, RedirectAttributes flash) {
         Cliente cliente = dataCliente.findOne(clienteID);
         if (cliente == null) {
             flash.addFlashAttribute("error", "El cliente no existe en la Base de datos");
@@ -142,6 +146,7 @@ public class FacturaController {
         return REDIRECT_LISTARFACTURA;
     }
 
+
     @GetMapping("/recordar/{id}")
     public String recordar(@PathVariable("id") int id, SessionStatus status, Model modelo, RedirectAttributes flash) {
         Factura factura = facturaDao.findFacturabyid(id);
@@ -188,34 +193,20 @@ public class FacturaController {
     public String facturar(@Validated Factura factura, RedirectAttributes flash, BindingResult result) {
         Calendar fechavencimiento = Calendar.getInstance();
         fechavencimiento.setTime(new Date());
-        int diapago = factura.getCliente().getDiapago();
-        fechavencimiento.set(Calendar.DAY_OF_MONTH, diapago);
+        fechavencimiento.set(Calendar.DAY_OF_MONTH, factura.getCliente().getDiapago());
         String client = factura.getCliente().getIdentificacion();
         factura.setFechapago(fechavencimiento.getTime());
         factura.setFechavencimiento(fechavencimiento.getTime());
         factura.setValor(factura.getCliente().getPlanes().getPrecio());
         factura.setNotificacion(0);
         factura.setPeriodo(LocalDate.now().getMonthValue() + 1);
-
         dataCliente.saveFactura(factura);
+
         String nombres = factura.getCliente().getNombres() + ' ' + factura.getCliente().getApellidos();
         String body = ESTIMADO_A_CLIENTE + nombres
                 + SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA;
         String email = factura.getCliente().getEmail();
-        int id = factura.getId();
-        try {
-            reporte.createPdfReport(id, client + ".pdf");
 
-        } catch (JRException e) {
-            e.printStackTrace();
-        }
-
-        smsService.enviarSMS(factura.getCliente().getTelefono(),
-                ESTIMADO_A + factura.getCliente().getNombres()
-                        + SE_HA_GENERADO_UNA_NUEVA_FACTURA_DE_SU_SERVICIO_DE_INTERNET
-                        + " http://sysredcartagena.duckdns.org:8081/descargarfactura/" + factura.getId());
-        mailService.sendEmailAttachment(LLEGO_TU_FACTURA_DE_INTERNET, body, ADMINISTRACION_TECNOWISP_COM_CO, email,
-                true, new File(client + ".pdf"));
         flash.addFlashAttribute("info", "Se ha generado una factura a " + factura.getCliente().getNombres() + " "
                 + factura.getCliente().getApellidos() + " correctamente");
         return "redirect:/listar";
@@ -223,85 +214,23 @@ public class FacturaController {
 
     @GetMapping("/facturar")
     public String facturarEnLote(RedirectAttributes flash, BindingResult result, Model modelo) {
-        Calendar fechaactual = Calendar.getInstance();
-        Calendar fechavencimiento = Calendar.getInstance();
-        int diaactual = fechaactual.get(Calendar.DAY_OF_MONTH);
         List<Cliente> cliente = clienteDao.findAll();
-        int x = 0;
-        int sum = 0;
+        int x = 0;   int sum = 0;
         while (x < cliente.size()) {
             Factura factura = new Factura();
             fechavencimiento.setTime(new Date());
             if (cliente.get(x).getDiapago() < 11 && diaactual > 25) {
                 int diapago = cliente.get(x).getDiapago();
-                fechavencimiento.add(Calendar.MONTH, 1);
-                fechavencimiento.set(Calendar.DAY_OF_MONTH, diapago);
-                factura.setCliente(cliente.get(x));
-                factura.setFechapago(fechavencimiento.getTime());
-                factura.setFechavencimiento(fechavencimiento.getTime());
-                factura.setValor(cliente.get(x).getPlanes().getPrecio());
-                factura.setNotificacion(0);
-                factura.setPeriodo(LocalDate.now().getMonthValue() + 1);
-                facturaD.save(factura);
+                save(factura,diapago,cliente.get(x),1);
                 sum = sum + 1;
-                int id = factura.getId();
-                String client = factura.getCliente().getIdentificacion();
-
-                try {
-                    reporte.createPdfReport(id, client + ".pdf");
-
-                } catch (JRException e) {
-                    e.printStackTrace();
-                }
-                String nombres = factura.getCliente().getNombres() + ' ' + factura.getCliente().getApellidos();
-                String body = ESTIMADO_A_CLIENTE + nombres
-                        + SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA;
-                String email = factura.getCliente().getEmail();
-                String tel = factura.getCliente().getTelefono();
-                mailService.sendEmailAttachment(LLEGO_TU_FACTURA_DE_INTERNET, body, ADMINISTRACION_TECNOWISP_COM_CO,
-                        email, true, new File(client + ".pdf"));
-                if (tel.length() == 10) {
-                    smsService.enviarSMS(factura.getCliente().getTelefono(),
-                            ESTIMADO_A + factura.getCliente().getNombres()
-                                    + SE_HA_GENERADO_UNA_NUEVA_FACTURA_DE_SU_SERVICIO_DE_INTERNET
-                                    + "http://sysredcartagena.duckdns.org:8081/descargarfactura/" + factura.getId());
-                }
-            } else if (cliente.get(x).getDiapago() >= 11 && diaactual < 25) {
-                int diapago = cliente.get(x).getDiapago();
-                fechavencimiento.set(Calendar.DAY_OF_MONTH, diapago);
-                factura.setCliente(cliente.get(x));
-                factura.setFechapago(fechavencimiento.getTime());
-                factura.setFechavencimiento(fechavencimiento.getTime());
-                factura.setValor(cliente.get(x).getPlanes().getPrecio());
-                factura.setNotificacion(0);
-                factura.setPeriodo(LocalDate.now().getMonthValue());
-                facturaD.save(factura);
-                sum = sum + 1;
-                int id = factura.getId();
-                String client = factura.getCliente().getIdentificacion();
-                try {
-                    reporte.createPdfReport(id, client + ".pdf");
-
-                } catch (JRException e) {
-                    e.printStackTrace();
-                }
-                String nombres = factura.getCliente().getNombres() + ' ' + factura.getCliente().getApellidos();
-                String body = ESTIMADO_A_CLIENTE + nombres
-                        + SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA;
-                String email = factura.getCliente().getEmail();
-                String tel = factura.getCliente().getTelefono();
-                mailService.sendEmailAttachment(LLEGO_TU_FACTURA_DE_INTERNET, body, ADMINISTRACION_TECNOWISP_COM_CO,
-                        email, true, new File(client + ".pdf"));
-
-                if (tel.length() == 10) {
-                    smsService.enviarSMS(factura.getCliente().getTelefono(),
-                            ESTIMADO_A + factura.getCliente().getNombres()
-                                    + SE_HA_GENERADO_UNA_NUEVA_FACTURA_DE_SU_SERVICIO_DE_INTERNET
-                                    + " descargar -->: http://sysredcartagena.duckdns.org:8081/descargarfactura/"
-                                    + factura.getId());
-                }
+                send(factura);
             }
-
+            else if (cliente.get(x).getDiapago() >= 11 && diaactual < 25) {
+                int diapago = cliente.get(x).getDiapago();
+                save(factura,diapago,cliente.get(x),0);
+                sum = sum + 1;
+                send(factura);
+            }
             x++;
         }
 
@@ -347,5 +276,41 @@ public class FacturaController {
         List<PagoDTO> pago = pagosD.lista();
         modelo.addAttribute("listapagos", pago);
         return LISTAR_PAGO;
+    }
+
+    private Factura save(Factura factura, int diapago, Cliente cliente, int periodo){
+        fechavencimiento.add(Calendar.MONTH, 1);
+        fechavencimiento.set(Calendar.DAY_OF_MONTH, diapago);
+        factura.setCliente(cliente);
+        factura.setFechapago(fechavencimiento.getTime());
+        factura.setFechavencimiento(fechavencimiento.getTime());
+        factura.setValor(cliente.getPlanes().getPrecio());
+        factura.setNotificacion(0);
+        factura.setPeriodo(LocalDate.now().getMonthValue() + periodo);
+        return facturaD.save(factura);
+    }
+
+    private void send(Factura factura){
+        int id = factura.getId();
+        String client = factura.getCliente().getIdentificacion();
+        try {
+            reporte.createPdfReport(id, client + ".pdf");
+
+        } catch (JRException e) {
+            e.printStackTrace();
+        }
+        String nombres = factura.getCliente().getNombres() + ' ' + factura.getCliente().getApellidos();
+        String body = ESTIMADO_A_CLIENTE + nombres
+                + SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA;
+        String email = factura.getCliente().getEmail();
+        String tel = factura.getCliente().getTelefono();
+        mailService.sendEmailAttachment(LLEGO_TU_FACTURA_DE_INTERNET, body, ADMINISTRACION_TECNOWISP_COM_CO,
+                email, true, new File(client + ".pdf"));
+        if (tel.length() == 10) {
+            smsService.enviarSMS(factura.getCliente().getTelefono(),
+                    ESTIMADO_A + factura.getCliente().getNombres()
+                            + SE_HA_GENERADO_UNA_NUEVA_FACTURA_DE_SU_SERVICIO_DE_INTERNET
+                            + "http://sysredcartagena.duckdns.org:8081/descargarfactura/" + factura.getId());
+        }
     }
 }

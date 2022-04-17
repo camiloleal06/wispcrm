@@ -28,7 +28,7 @@ HttpClientBuilder builder = HttpClientBuilder.create();
 builder.setDefaultRequestConfig(config);
 CloseableHttpClient httpClient = builder.build();
 HttpPost post = new HttpPost("http://www.altiria.net/api/http");
-List<NameValuePair> parametersList = new ArrayList <NameValuePair>();
+List<NameValuePair> parametersList = new ArrayList <>();
 parametersList.add(new BasicNameValuePair("cmd", "sendsms"));
 parametersList.add(new BasicNameValuePair("login", "ingenierocamiloleal@gmail.com"));
 parametersList.add(new BasicNameValuePair("passwd", "Camilo2020+-"));

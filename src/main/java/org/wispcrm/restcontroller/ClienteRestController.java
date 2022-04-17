@@ -37,7 +37,6 @@ InterfacePagos interfacePago;
 @GetMapping(value="/paginador")
 public ResponseEntity<Map<String, Object>> obtenerTodos(@RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size) {
-	try {
           List<ClienteDTO> clientesDTO = new ArrayList<ClienteDTO>();
           Pageable paging = PageRequest.of(page, size);
           Page<ClienteDTO> pageTuts;
@@ -51,11 +50,7 @@ public ResponseEntity<Map<String, Object>> obtenerTodos(@RequestParam(defaultVal
           resultado.put("totalItems", pageTuts.getTotalElements());
           resultado.put("totalPages", pageTuts.getTotalPages());
           return new ResponseEntity<>(resultado, HttpStatus.OK);
-        } 
-        
-        catch (Exception e) {
-          return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
 	}
 
 
@@ -65,12 +60,9 @@ public ResponseEntity<Page<ClienteDTO>> ListaClientes(
 @RequestParam(defaultValue = "0") int page,
 @RequestParam(defaultValue = "10") int size){
 Page<ClienteDTO> clientes = clienteservice.lista(PageRequest.of(page, size));
-try {
+
 return new ResponseEntity<Page<ClienteDTO>>(clientes, HttpStatus.OK);
-}
-catch(Exception e) {
-    return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-}
+
 }
 
 @GetMapping(value="/pagos")
@@ -79,26 +71,15 @@ public ResponseEntity<Map<String, Object>> getAllPagos(
         @RequestParam(defaultValue = "3") int size
       ) {
 
-    try {
-      List<PagoDTO> pagosDTO = new ArrayList<PagoDTO>();
       Pageable paging = PageRequest.of(page, size);
       Page<PagoDTO> pageTuts;
       pageTuts = interfacePago.lista(paging);
-    
-      pagosDTO = pageTuts.getContent();
-
       Map<String, Object> resultado = new HashMap<>();
-      resultado.put("pagos", pagosDTO);
+      resultado.put("pagos", pageTuts.getContent());
       resultado.put("currentPage", pageTuts.getNumber());
       resultado.put("totalItems", pageTuts.getTotalElements());
       resultado.put("totalPages", pageTuts.getTotalPages());
-
       return new ResponseEntity<>(resultado, HttpStatus.OK);
-    } 
-    
-    catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
   }
   
 	

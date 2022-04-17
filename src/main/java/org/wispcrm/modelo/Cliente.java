@@ -53,7 +53,7 @@ private String ipaddres;
 @Column(name = "create_at")
 @Temporal(TemporalType.DATE)
 @DateTimeFormat(pattern="yyyy-MM-dd")
-private Date CreateAt;
+private Date createAt;
 
 @OneToMany(mappedBy = "cliente", fetch = FetchType.EAGER,cascade = CascadeType.ALL)
 private List<Factura> facturas;
@@ -85,11 +85,18 @@ facturas= new ArrayList<>();
 
 @PrePersist
 public void prePersist() {
-	CreateAt=new Date();
+	createAt=new Date();
 }
 
+	public Date getCreateAt() {
+		return createAt;
+	}
 
-public List<Factura> getFacturas() {
+	public void setCreateAt(Date createAt) {
+		this.createAt = createAt;
+	}
+
+	public List<Factura> getFacturas() {
 	return facturas;
 }
 
@@ -143,14 +150,6 @@ public String getDireccion() {
 
 public void setDireccion(String direccion) {
 	this.direccion = direccion;
-}
-
-public Date getCreateAt() {
-	return CreateAt;
-}
-
-public void setCreateAt(Date createAt) {
-	CreateAt = createAt;
 }
 
 public void addFactura(Factura factura) {

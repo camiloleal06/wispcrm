@@ -39,12 +39,12 @@ public class Plan implements Serializable {
 	@Column(name = "create_at")
 	@Temporal(TemporalType.DATE)
 	@DateTimeFormat(pattern="yyyy-MM-dd")
-	private Date CreateAt;
+	private Date createAt;
 		
 	
 	@PrePersist
 	public void prePersist() {
-		CreateAt=new Date();
+		createAt=new Date();
 	}
 
 	public int getId() {
@@ -77,12 +77,12 @@ public class Plan implements Serializable {
 	public void setPrecio(Double precio) {
 		this.precio = precio;
 	}
-	public Date getCreateAt() {
-		return CreateAt;
-	}
-	public void setCreateAt(Date createAt) {
-		CreateAt = createAt;
-	}
-	
 
+	public Date getCreateAt() {
+		return createAt;
+	}
+
+	public void setCreateAt(Date createAt) {
+		this.createAt = createAt;
+	}
 }

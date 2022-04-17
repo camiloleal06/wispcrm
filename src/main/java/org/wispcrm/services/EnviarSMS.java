@@ -37,14 +37,14 @@ public class EnviarSMS {
             uex.printStackTrace();
         }
 
-        CloseableHttpResponse response = null;
-
         try {
-            response = httpClient.execute(post);
+            CloseableHttpResponse response = httpClient.execute(post);
             }
         catch (Exception e) {
             e.printStackTrace();
-              } finally {
+              }
+
+        finally {
             post.releaseConnection();
         }
     }

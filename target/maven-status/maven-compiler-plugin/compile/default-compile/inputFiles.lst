@@ -2,14 +2,15 @@ C:\wispcrm\src\main\java\org\wispcrm\interfaces\InterfaceClientes.java
 C:\wispcrm\src\main\java\org\wispcrm\modelo\FacturaCompra.java
 C:\wispcrm\src\main\java\org\wispcrm\services\ClienteServices.java
 C:\wispcrm\src\main\java\org\wispcrm\services\PlanServices.java
-C:\wispcrm\src\main\java\org\wispcrm\interfaceService\InterfaceClienteService.java
+C:\wispcrm\src\main\java\org\wispcrm\mikrotik\ConfigMikrotik.java
+C:\wispcrm\src\main\java\org\wispcrm\interfaceservice\InterfaceClienteService.java
 C:\wispcrm\src\main\java\org\wispcrm\interfaces\InterfacePagos.java
 C:\wispcrm\src\main\java\org\wispcrm\utils\LoginSuccessHandler.java
 C:\wispcrm\src\main\java\org\wispcrm\services\FacturaServices.java
 C:\wispcrm\src\main\java\org\wispcrm\services\PagoService.java
 C:\wispcrm\src\main\java\org\wispcrm\controller\LoginController.java
 C:\wispcrm\src\main\java\org\wispcrm\interfaces\InterfacePlanes.java
-C:\wispcrm\src\main\java\org\wispcrm\interfaceService\InterfacerfeFacturaService.java
+C:\wispcrm\src\main\java\org\wispcrm\interfaceservice\InterfacerfeFacturaService.java
 C:\wispcrm\src\main\java\org\wispcrm\modelo\Plan.java
 C:\wispcrm\src\main\java\org\wispcrm\modelo\Cliente.java
 C:\wispcrm\src\main\java\org\wispcrm\controller\FacturaController.java
@@ -18,7 +19,6 @@ C:\wispcrm\src\main\java\org\wispcrm\modelo\Pago.java
 C:\wispcrm\src\main\java\org\wispcrm\services\ClienteService.java
 C:\wispcrm\src\main\java\org\wispcrm\restcontroller\ClienteRestController.java
 C:\wispcrm\src\main\java\org\wispcrm\interfaces\ClienteRepository.java
-C:\wispcrm\src\main\java\org\wispcrm\mikrotik\Config.java
 C:\wispcrm\src\main\java\org\wispcrm\modelo\Empresa.java
 C:\wispcrm\src\main\java\org\wispcrm\services\FacturaReportService.java
 C:\wispcrm\src\main\java\org\wispcrm\mikrotik\Conectar.java
@@ -29,7 +29,7 @@ C:\wispcrm\src\main\java\org\wispcrm\WispcrmApplication.java
 C:\wispcrm\src\main\java\org\wispcrm\controller\GetFactura.java
 C:\wispcrm\src\main\java\org\wispcrm\mikrotik\Funciones.java
 C:\wispcrm\src\main\java\org\wispcrm\modelo\PagoDTO.java
-C:\wispcrm\src\main\java\org\wispcrm\interfaceService\InterfacePagoService.java
+C:\wispcrm\src\main\java\org\wispcrm\interfaceservice\InterfacePagoService.java
 C:\wispcrm\src\main\java\org\wispcrm\utils\Conexion.java
 C:\wispcrm\src\main\java\org\wispcrm\utils\FacturacionProgramada.java
 C:\wispcrm\src\main\java\org\wispcrm\modelo\ClienteDTO.java
@@ -38,4 +38,4 @@ C:\wispcrm\src\main\java\org\wispcrm\modelo\Factura.java
 C:\wispcrm\src\main\java\org\wispcrm\controller\HomeController.java
 C:\wispcrm\src\main\java\org\wispcrm\services\MailService.java
 C:\wispcrm\src\main\java\org\wispcrm\controller\PlanController.java
-C:\wispcrm\src\main\java\org\wispcrm\interfaceService\InterfacePlanService.java
+C:\wispcrm\src\main\java\org\wispcrm\interfaceservice\InterfacePlanService.java

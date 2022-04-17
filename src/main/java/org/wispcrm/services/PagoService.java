@@ -8,6 +8,8 @@ import org.wispcrm.interfaceservice.InterfacePagoService;
 import org.wispcrm.interfaces.InterfacePagos;
 import org.wispcrm.modelo.Pago;
 
+import javax.persistence.NoResultException;
+
 @Service
 public class PagoService implements InterfacePagoService {
 
@@ -22,20 +24,17 @@ public class PagoService implements InterfacePagoService {
 
 	@Override
 	public void save(Pago pago) {
-
-     pagosDAO.save(pago);		
+     pagosDAO.save(pago);
 	}
 
 	@Override
 	public Pago findOne(Integer id) {
-
-		return pagosDAO.findById(id).orElse(null);
+   	return pagosDAO.findById(id).orElseThrow(NoResultException::new);
 	}
 
 	@Override
 	public void delete(Integer id) {
-
-		pagosDAO.deleteById(id);	
+		pagosDAO.deleteById(id);
 	}
 
 }

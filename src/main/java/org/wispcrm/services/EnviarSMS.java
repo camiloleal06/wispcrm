@@ -3,7 +3,6 @@ package org.wispcrm.services;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.client.config.RequestConfig;

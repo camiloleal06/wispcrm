@@ -30,7 +30,6 @@ public class EnviarSMS {
         parametersList.add(new BasicNameValuePair("passwd", "Camilo2020+-"));
         parametersList.add(new BasicNameValuePair("dest", "57" + numero));
         parametersList.add(new BasicNameValuePair("msg", mensaje));
-
         try {
             post.setEntity(new UrlEncodedFormEntity(parametersList, "UTF-8"));
                  }
@@ -39,8 +38,7 @@ public class EnviarSMS {
         }
 
         try {
-            CloseableHttpResponse response = httpClient.execute(post);
-        response.notify();
+          httpClient.execute(post);
         }
         catch (Exception e) {
             e.printStackTrace();

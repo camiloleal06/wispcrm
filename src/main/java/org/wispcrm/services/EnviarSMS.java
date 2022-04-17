@@ -33,13 +33,15 @@ public class EnviarSMS {
 
         try {
             post.setEntity(new UrlEncodedFormEntity(parametersList, "UTF-8"));
-        } catch (UnsupportedEncodingException uex) {
+                 }
+        catch (UnsupportedEncodingException uex) {
             uex.printStackTrace();
         }
 
         try {
             CloseableHttpResponse response = httpClient.execute(post);
-            }
+        response.notify();
+        }
         catch (Exception e) {
             e.printStackTrace();
               }

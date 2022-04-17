@@ -5,7 +5,7 @@ import java.util.Date;
 public class PagoDTO {
 private int id;
 private double pago;
-private int factura_id;
+private int facturaId;
 private String nombre;
 private Date fechapago;
 private boolean estado;
@@ -21,11 +21,11 @@ public double getPago() {
 public void setPago(double pago) {
 	this.pago = pago;
 }
-public int getFactura_id() {
-	return factura_id;
+public int getFacturaId() {
+	return facturaId;
 }
-public void setFactura_id(int factura_id) {
-	this.factura_id = factura_id;
+public void setFacturaId(int facturaId) {
+	this.facturaId = facturaId;
 }
 
 
@@ -52,12 +52,12 @@ public void setEstado(boolean estado) {
 	this.estado = estado;
 }
 public PagoDTO(int id, double pago,
-		int factura_id,String nombre,
+		int facturaId,String nombre,
 		Date fechapago,boolean estado) {
 	super();
 	this.id = id;
 	this.pago = pago;
-	this.factura_id = factura_id;
+	this.facturaId = facturaId;
 	this.nombre=nombre;
 	this.fechapago=fechapago;
 	this.estado=estado;

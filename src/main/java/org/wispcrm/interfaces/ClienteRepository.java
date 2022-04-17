@@ -11,18 +11,17 @@ import org.wispcrm.modelo.ClienteDTO;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     
-    @Query("SELECT p FROM Cliente p WHERE"
-            + "  p.nombres LIKE %?1%")
-    public List<Cliente> search(String keyword);
+    @Query("SELECT p FROM Cliente p WHERE p.nombres LIKE %?1%")
+    List<Cliente> search(String keyword);
     
 	@Query("SELECT new org.wispcrm.modelo.ClienteDTO(c.id, c.identificacion, CONCAT(c.nombres,' ',c.apellidos), "
 			+ "c.email , c.telefono, p.precio) "
 			+ " FROM Cliente c JOIN c.planes p ")
-	public List<ClienteDTO> lista();
+	List<ClienteDTO> lista();
 	
 	@Query("SELECT new org.wispcrm.modelo.ClienteDTO(c.id, c.identificacion, CONCAT(c.nombres,' ',c.apellidos), "
 			+ "c.email , c.telefono, p.precio) "
 			+ " FROM Cliente c JOIN c.planes p ")
-	public Page<ClienteDTO> lista(Pageable pageable);
+	Page<ClienteDTO> lista(Pageable pageable);
 	
 }

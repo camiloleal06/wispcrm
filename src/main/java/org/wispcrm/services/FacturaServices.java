@@ -21,8 +21,7 @@ public class FacturaServices implements InterfacerfeFacturaService {
 
 	@Override
 	public Factura findFacturabyid(Integer id) {
-		// TODO Auto-generated method stub
-		return facturaDao.findById(id).orElse(null);
+			return facturaDao.findById(id).orElse(null);
 	}
 	
 

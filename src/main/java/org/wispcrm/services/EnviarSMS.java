@@ -1,6 +1,5 @@
 package org.wispcrm.services;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,13 +41,10 @@ public class EnviarSMS {
 
         try {
             response = httpClient.execute(post);
-            if (response.getStatusLine().getStatusCode() != 200) {
-                return;
             }
-        } catch (Exception e) {
+        catch (Exception e) {
             e.printStackTrace();
-            return;
-        } finally {
+              } finally {
             post.releaseConnection();
         }
     }

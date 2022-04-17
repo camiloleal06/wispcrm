@@ -1,5 +1,6 @@
 package org.wispcrm.modelo;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -18,7 +19,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 @Table(name="facturas")
-public class Factura {
+public class Factura implements Serializable {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;	

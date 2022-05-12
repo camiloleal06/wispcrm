@@ -1,32 +1,33 @@
 package org.wispcrm.utils;
 
-import net.sf.jasperreports.engine.JRException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.wispcrm.interfaces.InterfaceFacturas;
-import org.wispcrm.interfaceservice.InterfaceClienteService;
-import org.wispcrm.modelo.Cliente;
-import org.wispcrm.modelo.Factura;
-import org.wispcrm.services.ClienteServices;
-import org.wispcrm.services.FacturaReportService;
-import org.wispcrm.services.MailService;
-
 import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.wispcrm.daos.InterfaceFacturas;
+import org.wispcrm.interfaces.ClienteInterface;
+import org.wispcrm.modelo.Cliente;
+import org.wispcrm.modelo.Factura;
+import org.wispcrm.services.ClienteServiceImpl;
+import org.wispcrm.services.FacturaReportService;
+import org.wispcrm.services.MailService;
+
+import net.sf.jasperreports.engine.JRException;
 
 @Component
 
 public class FacturacionProgramada {
 
     @Autowired
-    InterfaceClienteService clienteDao;
-	@Autowired
-    ClienteServices datacliente;
-	@Autowired
+    ClienteInterface clienteDao;
+    @Autowired
+    ClienteServiceImpl datacliente;
+    @Autowired
     FacturaReportService reporte;
-	@Autowired
+    @Autowired
     MailService mailService;
     @Autowired
     InterfaceFacturas facturaDao;
@@ -52,14 +53,16 @@ public class FacturacionProgramada {
             factura.setFechapago(new Date());
             factura.setFechavencimiento(fechavencimiento.getTime());
             factura.setCliente(cl);
-            if (diaactual == cliente.getDiapago() && facturaDao.findFirstFacturaByCliente(factura.getCliente()) == null) {
+            if (diaactual == cliente.getDiaPago()
+                    && facturaDao.findFirstFacturaByCliente(factura.getCliente()) == null) {
                 datacliente.saveFactura(factura);
                 String client = factura.getCliente().getIdentificacion();
                 try {
                     reporte.createPdfReport(factura.getId(), client + ".pdf");
                     mailService.sendEmailAttachment("Llegó tu factura!!",
                             "Estimado(a) Cliente  se ha generado una factura a su nombre Gracias por su Preferencia",
-                            "administracion@nacionaldemuebles.com.co", factura.getCliente().getEmail(), true, new File(client + ".pdf"));
+                            "administracion@nacionaldemuebles.com.co", factura.getCliente().getEmail(), true,
+                            new File(client + ".pdf"));
                 } catch (JRException e) {
                     e.printStackTrace();
                 }
@@ -67,6 +70,5 @@ public class FacturacionProgramada {
 
         }
     }
-
 
 }

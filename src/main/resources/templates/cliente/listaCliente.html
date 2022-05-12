@@ -83,33 +83,28 @@
 									<table id="example1" class="table table-bordered table-striped">
 										<thead class="cf">
 											<tr>
-								
 												<th>Nombres</th>
 												<th>Telefono</th>
 												<th>Email</th>
 												<th>Plan</th>
+												<th>Estado</th>
 												<th></th>
 											</tr>
 										</thead>
 										<tbody>
 											<tr th:each="clientes:${cliente}">
-										
 												<td th:text="${clientes.nombres}"></td>
 												<td th:text="${clientes.telefono}"></td>
 												<td th:text="${clientes.email}"></td>
 												<td th:text="${clientes.valor}"></td>
+												<td th:text="${clientes.estado}"></td>
 												<td><a th:href="@{/vercliente(id=${clientes.id})}"
 														class="btn btn-success btn-rounded btn-icon 
 														data-toggle="tooltip"
-														 data-placement="center" 
-														 title="Detalle cliente"">
-														<i class="fas fa-eye"></i>
-
-													</a>
-
-
-
-													<a th:href="@{/factura(clienteID=${clientes.id})}"
+													    data-placement="center"
+														title="Detalle cliente"">
+														<i class="fas fa-eye"></i></a>
+                                                       <a th:href="@{/factura(clienteID=${clientes.id})}"
 														class="btn btn-primary btn-rounded btn-icon  
 														data-toggle="tooltip"
 														 data-placement="center" 

@@ -8,14 +8,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.wispcrm.interfaceservice.InterfacePlanService;
+import org.wispcrm.interfaces.PlanInterface;
 import org.wispcrm.modelo.Plan;
 
 @Controller
 public class PlanController {
 
     @Autowired
-    private InterfacePlanService planDao;
+    private PlanInterface planDao;
     private static final String LISTAR_PLAN = "plan/listaPlan";
     private static final String VER_FORM_PLAN = "plan/formPlan";
 

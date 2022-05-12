@@ -1,47 +1,44 @@
 package org.wispcrm.controller;
 
 import java.text.NumberFormat;
-import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.wispcrm.interfaceservice.InterfaceClienteService;
-import org.wispcrm.interfaces.InterfaceClientes;
-import org.wispcrm.interfaces.InterfaceFacturas;
-import org.wispcrm.interfaces.InterfacePagos;
-import org.wispcrm.modelo.Cliente;
+import org.wispcrm.daos.ClienteDao;
+import org.wispcrm.daos.InterfaceFacturas;
+import org.wispcrm.daos.InterfacePagos;
 
 @Controller
 public class HomeController {
     @Autowired
-    InterfaceClienteService clienteDao;
+    private InterfaceFacturas facturaDao;
 
     @Autowired
-    private InterfaceFacturas facturaD;
-
-    @Autowired
-    InterfaceClientes clientedao1;
+    ClienteDao clienteDao;
 
     @Autowired
     InterfacePagos pagosDao;
 
     @GetMapping("/")
     public String home(Model modelo) {
-        List<Cliente> cliente = clienteDao.findAll();
-
-        modelo.addAttribute("numeroclientes", cliente.size());
-        modelo.addAttribute("numerofacturas", facturaD.findFacturaByEstado(true).size());
-        modelo.addAttribute("cantidad", formatearMoneda(facturaD.pendientes()));
-        modelo.addAttribute("pagadas", formatearMoneda(facturaD.pagadas()));
+        modelo.addAttribute("numeroclientes", clienteDao.count());
+        modelo.addAttribute("numerofacturas", facturaDao.facturas());
+        modelo.addAttribute("cantidad", formatearMoneda(facturaDao.pendientes()));
+        modelo.addAttribute("pagadas", formatearMoneda(facturaDao.pagadas()));
         return "home";
     }
 
     private Object formatearMoneda(Long numero) {
         Locale locale = new Locale("es", "CO");
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(locale);
-        return currencyFormatter.format(numero.doubleValue());
+        if(null!=numero) {
+            return currencyFormatter.format(numero.doubleValue());
+        }
+        else{
+            return currencyFormatter.format(0.0);
+        }
     }
 }

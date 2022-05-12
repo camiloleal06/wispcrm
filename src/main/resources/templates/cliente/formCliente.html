@@ -112,21 +112,21 @@
 												th:field="*{telefono}" class="form-control" id="telefono">
 											<span class="clase" th:if="${#fields.hasErrors('telefono')}"
 												th:errors="*{telefono}"></span>
-
 										</div>
+
+										<div class="form-group col-md-2">
+											<label for="fecha">Dia de Pago</label>
+											<input type="number"th:field="*{diaPago}" min="1" max="30" required	class="form-control" id="fecha">
+										</div>
+
 										<div class="form-group col-md-4">
 											<label>Plan de Internet</label> 
-											
-												<select th:field="*{planes}" class="form-control">
-													<option th:each="pl:${listaplan}" th:value="${pl.id}"
+											<select th:field="*{planes}" class="form-control">
+												<option  th:selected="${planes}" th:each="pl:${listaplan}" th:value="${pl.id}"
 														th:text="${pl.nombre}" />
 											</select>
 										</div>
-										<div class="form-group col-md-2">
-											<label for="fecha">Dia de Pago</label> <input type="number"
-												th:field="*{diapago}" min="1" max="30" required
-												class="form-control" id="fecha">
-										</div>
+
 									</div>
 									<div class="box-footer col-md-12">
 										<button class="btn btn-primary" type="submit">Guardar</button>
@@ -141,8 +141,5 @@
 		</div>
 		<footer th:replace="layout/layout :: footer"></footer>
 	</div>
-
-
-
 </body>
 </html>

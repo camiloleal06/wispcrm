@@ -18,9 +18,17 @@ import javax.persistence.TemporalType;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 @Entity
 @Table(name = "Pagos")
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Pago implements Serializable {
 
     /**
@@ -33,62 +41,14 @@ public class Pago implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Factura factura;
-
     @Column(name = "fecha_pago")
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fechaPago;
-
-    public Date getFechaPago() {
-        return fechaPago;
-    }
-
-    public void setFechaPago(Date fechaPago) {
-        this.fechaPago = fechaPago;
-    }
-
     private double pago;
-
     private double saldo;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Factura getFactura() {
-        return factura;
-    }
-
-    public void setFactura(Factura factura) {
-        this.factura = factura;
-    }
-
-    public double getPago() {
-        return pago;
-    }
-
-    public void setPago(double pago) {
-        this.pago = pago;
-    }
-
-    public double getSaldo() {
-        return saldo;
-    }
-
-    public void setSaldo(double saldo) {
-        this.saldo = saldo;
-    }
-
-    public Pago() {
-        // Spring lo Exige
-    }
 
     @PrePersist
     public void prePersist() {

@@ -24,18 +24,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.wispcrm.interfaceservice.InterfaceClienteService;
-import org.wispcrm.interfaceservice.InterfacePlanService;
-import org.wispcrm.interfaces.InterfaceFacturas;
-import org.wispcrm.interfaces.InterfacePagos;
+import org.wispcrm.daos.InterfacePagos;
+import org.wispcrm.interfaces.ClienteInterface;
+import org.wispcrm.interfaces.PlanInterface;
 import org.wispcrm.modelo.Cliente;
 import org.wispcrm.modelo.Factura;
 import org.wispcrm.modelo.Pago;
 import org.wispcrm.modelo.PagoDTO;
-import org.wispcrm.services.ClienteServices;
+import org.wispcrm.services.ClienteServiceImpl;
 import org.wispcrm.services.EnviarSMS;
 import org.wispcrm.services.FacturaReportService;
-import org.wispcrm.services.FacturaServices;
+import org.wispcrm.services.FacturaServiceImpl;
 import org.wispcrm.services.MailService;
 import org.wispcrm.services.PagoService;
 
@@ -59,10 +58,10 @@ public class FacturaController {
     private InterfacePagos pagosD;
 
     @Autowired
-    private ClienteServices dataCliente;
+    private ClienteServiceImpl dataCliente;
 
     @Autowired
-    InterfaceClienteService clienteDao;
+    ClienteInterface clienteDao;
 
     @Autowired
     FacturaReportService reporte;
@@ -71,16 +70,13 @@ public class FacturaController {
     private MailService mailService;
 
     @Autowired
-    private FacturaServices facturaDao;
+    private FacturaServiceImpl facturaDao;
 
     @Autowired
     private EnviarSMS smsService;
 
     @Autowired
-    private InterfaceFacturas facturaD;
-
-    @Autowired
-    private InterfacePlanService planDao;
+    private PlanInterface planDao;
 
     Calendar fechaactual = Calendar.getInstance();
     Calendar fechavencimiento = Calendar.getInstance();
@@ -92,8 +88,7 @@ public class FacturaController {
     private static final String LISTAR_PAGO = "factura/listaPago";
 
     @RequestMapping(value = "/factura")
-    public String crear(@RequestParam(name = "clienteID") Integer clienteID,
-                        Model modelo, RedirectAttributes flash) {
+    public String crear(@RequestParam(name = "clienteID") Integer clienteID, Model modelo, RedirectAttributes flash) {
         Cliente cliente = dataCliente.findOne(clienteID);
         if (cliente == null) {
             flash.addFlashAttribute("error", "El cliente no existe en la Base de datos");
@@ -105,13 +100,11 @@ public class FacturaController {
         modelo.addAttribute("factura", factura);
         modelo.addAttribute("titulo", "Nueva Factura");
         return VER_FORMULARIO_FACTURA;
-
     }
 
     @RequestMapping(value = "/listarfactura")
     public String listarfactura(Model modelo) {
-        List<Factura> factura = facturaD.findFacturaByEstado(true);
-        modelo.addAttribute("listafactura", factura);
+        modelo.addAttribute("listafactura", facturaDao.listadoFacturas());
         return LISTAR_FACTURA;
     }
 
@@ -131,7 +124,7 @@ public class FacturaController {
         pago.setFactura(factura);
         factura.setEstado(false);
         pagosDAO.save(pago);
-        facturaD.save(factura);
+        facturaDao.save(factura);
         try {
             reporte.pagoPdfReport(factura.getId(), pago.getId() + "_" + factura.getCliente().getNombres() + ".pdf");
 
@@ -146,7 +139,6 @@ public class FacturaController {
         return REDIRECT_LISTARFACTURA;
     }
 
-
     @GetMapping("/recordar/{id}")
     public String recordar(@PathVariable("id") int id, SessionStatus status, Model modelo, RedirectAttributes flash) {
         Factura factura = facturaDao.findFacturabyid(id);
@@ -154,11 +146,9 @@ public class FacturaController {
         if (telefono.length() != 10) {
             flash.addFlashAttribute("error", "No se ha enviado el mensaje el numero de telefono es invalido ");
             status.setComplete();
-        }
-
-        else {
+        } else {
             factura.setNotificacion(factura.getNotificacion() + 1);
-            facturaD.save(factura);
+            facturaDao.save(factura);
             smsService.enviarSMS(telefono, "No hemos recibido su pago del mes de Internet actual.");
             flash.addFlashAttribute("info", "El mensaje ha sido enviado a : " + telefono);
             status.setComplete();
@@ -170,7 +160,7 @@ public class FacturaController {
     public String avisocorte(@PathVariable("id") int id, SessionStatus status, Model modelo, RedirectAttributes flash) {
         Factura factura = facturaDao.findFacturabyid(id);
         factura.setEstado(true);
-        facturaD.save(factura);
+        facturaDao.save(factura);
         smsService.enviarSMS(factura.getCliente().getTelefono(), ESTIMADO_A + factura.getCliente().getNombres()
                 + " Usted cuenta con dos facturas vencidas, " + "su servicio de internet será suspendido Att. SYSRED");
         flash.addFlashAttribute("info", "El mensaje ha sido enviado a : " + factura.getCliente().getTelefono());
@@ -183,7 +173,7 @@ public class FacturaController {
             RedirectAttributes flash) {
         Factura f = facturaDao.findFacturabyid(id);
         f.setEstado(false);
-        facturaD.deleteById(id);
+        facturaDao.delete(id);
         flash.addFlashAttribute("warning", "Cliente Eliminado con exito");
         status.setComplete();
         return REDIRECT_LISTARFACTURA;
@@ -192,7 +182,7 @@ public class FacturaController {
     @PostMapping("/savefactura")
     public String facturar(@Validated Factura factura, RedirectAttributes flash, BindingResult result) {
         fechavencimiento.setTime(new Date());
-        fechavencimiento.set(Calendar.DAY_OF_MONTH, factura.getCliente().getDiapago());
+        fechavencimiento.set(Calendar.DAY_OF_MONTH, factura.getCliente().getDiaPago());
         factura.setFechapago(fechavencimiento.getTime());
         factura.setFechavencimiento(fechavencimiento.getTime());
         factura.setValor(factura.getCliente().getPlanes().getPrecio());
@@ -212,15 +202,15 @@ public class FacturaController {
         while (x < cliente.size()) {
             Factura factura = new Factura();
             fechavencimiento.setTime(new Date());
-            if (cliente.get(x).getDiapago() < 11 && diaactual > 25) {
-                int diapago = cliente.get(x).getDiapago();
-                save(factura,diapago,cliente.get(x),1);
+            if (cliente.get(x).getDiaPago() < 11 && diaactual > 25) {
+                int diapago = cliente.get(x).getDiaPago();
+                save(factura, diapago, cliente.get(x), 1);
                 sum = sum + 1;
                 send(factura);
             }
-            else if (cliente.get(x).getDiapago() >= 11 && diaactual < 25) {
-                int diapago = cliente.get(x).getDiapago();
-                save(factura,diapago,cliente.get(x),0);
+            else if (cliente.get(x).getDiaPago() >= 11 && diaactual < 25) {
+                int diapago = cliente.get(x).getDiaPago();
+                save(factura, diapago, cliente.get(x), 0);
                 sum = sum + 1;
                 send(factura);
             }
@@ -268,7 +258,7 @@ public class FacturaController {
         return LISTAR_PAGO;
     }
 
-    private Factura save(Factura factura, int diapago, Cliente cliente, int periodo){
+    private Factura save(Factura factura, int diapago, Cliente cliente, int periodo) {
         fechavencimiento.add(Calendar.MONTH, 1);
         fechavencimiento.set(Calendar.DAY_OF_MONTH, diapago);
         factura.setCliente(cliente);
@@ -277,11 +267,10 @@ public class FacturaController {
         factura.setValor(cliente.getPlanes().getPrecio());
         factura.setNotificacion(0);
         factura.setPeriodo(LocalDate.now().getMonthValue() + periodo);
-        return facturaD.save(factura);
+          return facturaDao.save(factura);
     }
 
-
-    private void send(Factura factura){
+    private void send(Factura factura) {
         int id = factura.getId();
         String client = factura.getCliente().getIdentificacion();
         try {
@@ -295,8 +284,8 @@ public class FacturaController {
                 + SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA;
         String email = factura.getCliente().getEmail();
         String tel = factura.getCliente().getTelefono();
-        mailService.sendEmailAttachment(LLEGO_TU_FACTURA_DE_INTERNET, body, ADMINISTRACION_TECNOWISP_COM_CO,
-                email, true, new File(client + ".pdf"));
+        mailService.sendEmailAttachment(LLEGO_TU_FACTURA_DE_INTERNET, body, ADMINISTRACION_TECNOWISP_COM_CO, email,
+                true, new File(client + ".pdf"));
         if (tel.length() == 10) {
             smsService.enviarSMS(factura.getCliente().getTelefono(),
                     ESTIMADO_A + factura.getCliente().getNombres()

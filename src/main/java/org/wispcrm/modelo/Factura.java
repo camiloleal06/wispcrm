@@ -15,120 +15,46 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-@Table(name="facturas")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "facturas")
 public class Factura implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;	
-	
-	@Column(name = "estado")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    @Column(name = "estado")
     private boolean estado;
-	
-	@Column(name = "periodo")
+    @Column(name = "periodo")
     private int periodo;
-	
-	@Column(name = "create_at")
-	@Temporal(TemporalType.DATE)
-	@DateTimeFormat(pattern="yyyy-MM-dd")
-	private Date createAt;
-	
+    @Column(name = "create_at")
     @Temporal(TemporalType.DATE)
-	@DateTimeFormat(pattern="yyyy-MM-dd")
-	private Date fechapago;
-	
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date createAt;
     @Temporal(TemporalType.DATE)
-	@DateTimeFormat(pattern="yyyy-MM-dd")
-	private Date fechavencimiento;
-	
-	@ManyToOne(fetch=FetchType.LAZY)
-	private Cliente cliente;
-	    
-	private double valor;
-	
-	private int notificacion;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date fechapago;
+    @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Date fechavencimiento;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Cliente cliente;
+    private double valor;
+    private int notificacion;
 
-	
-	@PrePersist
-	public void prePersist() {
-		createAt =new Date();
-		estado=true;
-		
-	}
+    @PrePersist
+    public void prePersist() {
+        createAt = new Date();
+        estado = true;
 
-	public boolean isEstado() {
-		return estado;
-	}
-
-	public void setEstado(boolean estado) {
-		this.estado = estado;
-	}
-
-	public int getId() {
-		return id;
-	}
-
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public Date getCreateAt() {
-		return createAt;
-	}
-
-	public void setCreateAt(Date createAt) {
-		this.createAt = createAt;
-	}
-
-	public Date getFechapago() {
-		return fechapago;
-	}
-
-	public void setFechapago(Date fechapago) {
-		this.fechapago = fechapago;
-	}
-
-	public Date getFechavencimiento() {
-		return fechavencimiento;
-	}
-
-	public void setFechavencimiento(Date fechavencimiento) {
-		this.fechavencimiento = fechavencimiento;
-	}
-
-	public Cliente getCliente() {
-		return cliente;
-	}
-
-	public void setCliente(Cliente cliente) {
-		this.cliente = cliente;
-	}
-
-	public double getValor() {
-		return valor;
-	}
-
-	public void setValor(double valor) {
-		this.valor = valor;
-	}
-
-	public int getNotificacion() {
-		return notificacion;
-	}
-
-	public void setNotificacion(int notificacion) {
-		this.notificacion = notificacion;
-	}
-
-	public int getPeriodo() {
-		return periodo;
-	}
-
-	public void setPeriodo(int periodo) {
-		this.periodo = periodo;
-	}
-	
+    }
 }

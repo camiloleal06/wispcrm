@@ -36,14 +36,6 @@
 						<div class="col-md-12">
 							<!-- general form elements -->
 							<div class="card card-primary">
-
-
-								<!--  		<img th:if="${#strings.length(cliente.foto) > 0}"
-					class="img-thumbnail rounded float-left" style="max-width: 25%;"
-					th:src="@{'/uploads/' + ${cliente.foto}}" th:alt="${cliente.foto}" />-->
-
-
-
 								<ul class="list-group">
 									<li class="list-group-item"
 										th:text="'Cliente : '+${cliente.nombres}+' '+${cliente.apellidos} "></li>
@@ -54,12 +46,7 @@
 									<li class="list-group-item" th:text="'Fecha de Creacion : '+${cliente.createAt}">
 									</li>
 								</ul>
-
-								<div th:if="${#lists.isEmpty(cliente.facturas)}"
-					class="alert alert-info my-4"
-					th:text="'No hay facturas asignadas para el cliente ' + ${cliente.nombres} + ' ' + ${cliente.apellidos}"></div>
-
-				<table th:if="${not #lists.isEmpty(cliente.facturas)}"
+				<table th:if="${not #lists.isEmpty(facturas)}"
 					class="table table-bordered table-striped my-4">
 					<thead class="primary">
 						<tr>
@@ -70,7 +57,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="factura: ${cliente.facturas}">
+						<tr th:each="factura: ${facturas}">
 							<td th:text="${factura.id}"></td>
 							<td>
 							<th:block th:if="${factura.estado eq true}"><span class="badge bg-warning">Pendiente</span></th:block>

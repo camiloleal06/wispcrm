@@ -3,12 +3,11 @@ package org.wispcrm.services;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.wispcrm.interfaces.ClienteRepository;
+import org.wispcrm.daos.ClienteRepository;
 import org.wispcrm.modelo.Cliente;
 
 @Service
 public class ClienteService {
-
 	@Autowired
 private ClienteRepository repo;
 

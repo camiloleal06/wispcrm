@@ -90,35 +90,38 @@
 										</thead>
 										<tbody>
 											<tr th:each="factura: ${listafactura}">
-												<td th:text="${factura.id}"></td>
-												<td
-													th:text="${factura.cliente.nombres}+' '+ ${factura.cliente.apellidos}">
-												</td>
+												<td th:text="${factura.idFactura}"></td>
+												<td	th:text="${factura.nombres}"></td>
+												<td th:text="${factura.telefonoCliente}">
+												<td th:text="${#numbers.formatInteger(factura.valorFactura,0,'POINT')}"></td>
+												<!--th:text="${factura.cliente.nombres}+' '+ ${factura.cliente.apellidos}">-->
+
 												<!-- <td><th:block th:if="${factura.estado eq true}">
 														<span class="badge bg-warning" th:text="Pendiente"></span>
 													</th:block> <th:block th:unless="${factura.estado eq  true}">
 														<span class="badge bg-primary" th:text="Pagada"></span>
 													</th:block></td>
-													 -->
 
-												<td th:text="${factura.cliente.telefono}"></td>
 
-												<td th:text="${#numbers.formatInteger(factura.valor,0,'POINT')}"></td>
-												<td><a th:onclick="pagar([[${factura.id}]])"
+												<td th:text="${factura.cliente.telefono}"></td>-->
+
+
+
+												<td><a th:onclick="pagar([[${factura.idFactura}]])"
 													class="btn btn-primary btn-sm" th:text="Pagar"></a> <a
-													th:onclick="eliminar([[${factura.id}]])"
+													th:onclick="eliminar([[${factura.idFactura}]])"
 													class="btn btn-danger btn-sm" th:text="Eliminar"></a>
-										 <a class="btn btn-success btn-sm" th:href="@{'descargarfactura/' + ${factura.id}}"
+										 <a class="btn btn-success btn-sm" th:href="@{'descargarfactura/' + ${factura.idFactura}}"
 												 th:text="'Descargar'" >
 							 </a>
 							 	
-							 			 <a class="btn btn-warning btn-sm" th:href="@{'recordar/' + ${factura.id}}"
+							 			 <a class="btn btn-warning btn-sm" th:href="@{'recordar/' + ${factura.idFactura}}"
 												 th:text=" ' Recordatorio'"  >
 												 
 												 
 							 </a>
 							 
-							 			 <a class="btn btn-warning btn-sm" th:href="@{'avisocorte/' + ${factura.id}}"
+							 			 <a class="btn btn-warning btn-sm" th:href="@{'avisocorte/' + ${factura.idFactura}}"
 												 th:text=" ' Aviso'"  >
 												 
 												 
@@ -126,7 +129,7 @@
 		<a>
 	
                 <span class="badge badge-info 
-                right" th:text="${factura.notificacion}"></span>
+                right" th:text="0"></span>
 		</a>
 							 </td>
 							 	

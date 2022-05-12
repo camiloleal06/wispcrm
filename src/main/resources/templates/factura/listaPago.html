@@ -95,13 +95,13 @@
 											<tbody>
 												<tr th:each="pago: ${listapagos}">
 													<td th:text=${pago.id}></td>
-													<td th:text="${pago.factura_id}"></td>
+													<td th:text="${pago.facturaId}"></td>
 													<td th:text="${pago.nombre}"></td>
 													<td th:text="${pago.fechapago}"></td>
 													<td th:text="${pago.pago}"></td>
-													<td><a th:onclick="pagar([[${pago.factura_id}]])"
+												    <td><a th:onclick="pagar([[${pago.facturaId}]])"
 													class="btn btn-primary btn-sm" th:text="Pagar"></a> <a
-													th:onclick="eliminar([[${pago.factura_id}]])"
+													th:onclick="eliminar([[${pago.facturaId}]])"
 													class="btn btn-danger btn-sm" th:text="Eliminar"></a></td>
 												</tr>
 											</tbody>

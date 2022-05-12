@@ -76,11 +76,11 @@ public class FacturaReportService {
     }
 
     public void createPdfReport(Integer id, String cliente) throws JRException {
-    report(id,cliente);
+        report(id, cliente);
     }
 
     public void pagoPdfReport(Integer id, String cliente) throws JRException {
-      report(id,cliente);
+        report(id, cliente);
     }
 
     public void generateInvoiceFor(Integer id) throws IOException {
@@ -103,14 +103,13 @@ public class FacturaReportService {
     }
 
     private JasperReport loadTemplate() throws JRException {
-
         final InputStream reportInputStream = getClass().getResourceAsStream(invoiceTemplate);
         final JasperDesign jasperDesign = JRXmlLoader.load(reportInputStream);
 
         return JasperCompileManager.compileReport(jasperDesign);
     }
 
-    private void report(Integer id, String cliente) throws JRException{
+    private void report(Integer id, String cliente) throws JRException {
         final InputStream stream = this.getClass().getResourceAsStream(invoiceTemplate);
         JasperReport report = JasperCompileManager.compileReport(stream);
         Map<String, Object> parameters = new HashMap<>();

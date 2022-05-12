@@ -7,10 +7,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.wispcrm.interfaces.InterfacePagos;
-import org.wispcrm.modelo.ClienteDTO;
-import org.wispcrm.modelo.PagoDTO;
-import org.wispcrm.services.ClienteServices;
+import org.wispcrm.daos.InterfaceFacturas;
+import org.wispcrm.daos.InterfacePagos;
+import org.wispcrm.modelo.*;
+import org.wispcrm.services.ClienteServiceImpl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,18 +24,21 @@ import java.util.Map;
 public class ClienteRestController {
 
     @Autowired
-    ClienteServices clienteservice;
+    ClienteServiceImpl clienteservice;
 
     @Autowired
     InterfacePagos interfacePago;
 
+    @Autowired
+    InterfaceFacturas facturasDao;
+
     @GetMapping(value = "/paginador")
     public ResponseEntity<Map<String, Object>> obtenerTodos(@RequestParam(defaultValue = "0") int page,
-                                                            @RequestParam(defaultValue = "10") int size) {
+                                                          @RequestParam(defaultValue = "10") int size) {
 
         Pageable paging = PageRequest.of(page, size);
         Page<ClienteDTO> pageTuts;
-        pageTuts = clienteservice.lista(paging);
+        pageTuts = clienteservice.listaPageable(paging);
         List<ClienteDTO> clientesDTO = pageTuts.getContent();
         Map<String, Object> resultado = new HashMap<>();
         resultado.put("clientes", clientesDTO);
@@ -51,9 +54,21 @@ public class ClienteRestController {
     public ResponseEntity<Page<ClienteDTO>> listaClientes(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        return new ResponseEntity<>(clienteservice.lista(PageRequest.of(page, size)), HttpStatus.OK);
+        return new ResponseEntity<>(clienteservice.listaPageable(PageRequest.of(page, size)), HttpStatus.OK);
 
     }
+
+    @GetMapping("/facturas")
+    public ResponseEntity<List<FacturaDto>> listaFacturas() {
+        return new ResponseEntity<>(facturasDao.listadoFacturasPendientes(), HttpStatus.OK);
+
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<EditarClienteDTO> clienteID(@PathVariable Integer id) {
+        return new ResponseEntity<>(clienteservice.editarCliente(id), HttpStatus.OK);
+
+    }
+
 
     @GetMapping(value = "/pagos")
     public ResponseEntity<Map<String, Object>> getAllPagos(

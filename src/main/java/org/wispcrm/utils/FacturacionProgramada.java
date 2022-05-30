@@ -53,7 +53,7 @@ public class FacturacionProgramada {
             factura.setFechapago(new Date());
             factura.setFechavencimiento(fechavencimiento.getTime());
             factura.setCliente(cl);
-            if (diaactual == cliente.getDiaPago()
+            if (diaactual == cliente.getDiapago()
                     && facturaDao.findFirstFacturaByCliente(factura.getCliente()) == null) {
                 datacliente.saveFactura(factura);
                 String client = factura.getCliente().getIdentificacion();

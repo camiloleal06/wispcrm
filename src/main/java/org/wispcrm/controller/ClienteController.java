@@ -19,7 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.wispcrm.daos.InterfaceFacturas;
 import org.wispcrm.modelo.Cliente;
 import org.wispcrm.modelo.ClienteDTO;
-import org.wispcrm.modelo.EditarClienteDTO;
 import org.wispcrm.services.ClienteServiceImpl;
 import org.wispcrm.services.EnviarSMS;
 import org.wispcrm.services.PlanServiceImpl;
@@ -76,55 +75,24 @@ public class ClienteController {
     }
 
     @PostMapping(value = "/save")
-    public String save(@ModelAttribute @Validated EditarClienteDTO clienteDTO, Model modelo, RedirectAttributes flash,
-            BindingResult result, @RequestParam(name = "id") Integer id, SessionStatus status) {
+    public String save(@ModelAttribute @Validated Cliente cliente, Model modelo, RedirectAttributes flash,
+            BindingResult result, SessionStatus status) {
         modelo.addAttribute(TITULO, "Nuevo Cliente");
-
-        if (result.hasErrors()) {
-            return VER_FORM_CLIENTE;
-        }
-
-        if (clienteService.findOne(id) != null) {
-            clienteService.save(clienteService.findOne(id));
-            status.setComplete();
-            flash.addFlashAttribute(SUCCESS, "Cliente actualizado correctamente").addFlashAttribute(CLASE, SUCCESS);
-            return REDIRECT_LISTAR;
-
-        } else {
-            if (clienteService.findFirstClienteByIdentificacion(clienteDTO.getIdentificacion()) != null) {
-                flash.addFlashAttribute(ERROR, "Ya existe un cliente con esta Identificacion").addFlashAttribute(CLASE,
-                        WARNING);
-                return REDIRECT_FORM;
-            }
-
-            else if (clienteService.findFirstClienteByTelefono(clienteDTO.getTelefono()) != null) {
-                flash.addFlashAttribute(ERROR, "Ya existe un cliente con este Telefonos").addFlashAttribute(CLASE,
-                        WARNING);
-                return REDIRECT_FORM;
-            }
-
-            else if (clienteService.findFirstClienteByEmail(clienteDTO.getEmail()) != null) {
-                flash.addFlashAttribute(ERROR, "Ya existe un cliente con este email").addFlashAttribute(CLASE, WARNING);
-                return REDIRECT_FORM;
-            }
-
-            else {
-                Cliente cliente = Cliente.builder().apellidos(clienteDTO.getApellidos())
-                        .diaPago(clienteDTO.getDiaPago()).nombres(clienteDTO.getNombres()).email(clienteDTO.getEmail())
-                        .identificacion(clienteDTO.getIdentificacion()).direccion(clienteDTO.getDireccion())
-                        .planes(planDao.findOne(clienteDTO.getIdPago())).build();
-                clienteService.save(cliente);
-                status.setComplete();
-                flash.addFlashAttribute(SUCCESS, "Agregado correctamente").addFlashAttribute(CLASE, SUCCESS);
-                return REDIRECT_LISTAR;
-            }
-
-        }
+        clienteService.save(cliente);
+        status.setComplete();
+        flash.addFlashAttribute(SUCCESS, cliente.getNombres() + "Agregado correctamente").addFlashAttribute(CLASE,
+                SUCCESS);
+        return REDIRECT_LISTAR;
     }
 
+    /**
+     * 
+     * @param id
+     * @param modelo
+     * @return
+     */
     @RequestMapping(value = "/editar")
     public String editar(@RequestParam(name = "id") Integer id, Model modelo) {
-        /// (()) Cliente cliente = clienteService.findOne(id);
         modelo.addAttribute(CLIENTE, clienteService.editarCliente(id));
         modelo.addAttribute("listaplan", planService.findAll());
         modelo.addAttribute(TITULO, "Actualizar Cliente");
@@ -139,14 +107,11 @@ public class ClienteController {
         flash.addFlashAttribute("info", "El mensaje ha sido enviado ");
         status.setComplete();
         return REDIRECT_LISTAR;
-
     }
 
     @GetMapping("/eliminar/{id}")
-    public String eliminar(@PathVariable int id, SessionStatus status, Model modelo) {
+    public String eliminar(@PathVariable int id) {
         clienteService.delete(id);
-        status.setComplete();
         return REDIRECT_LISTAR;
     }
-
 }

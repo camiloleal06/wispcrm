@@ -22,14 +22,15 @@ public interface ClienteDao extends JpaRepository<Cliente, Integer> {
 
     Optional<Cliente> findFirstClienteByTelefono(String telefono);
 
-    Optional<Cliente> findFirstClienteByDiaPago(int diapago);
+    Optional<Cliente> findFirstClienteByDiapago(int diapago);
 
-    @Query("SELECT new org.wispcrm.modelo.ClienteDTO(c.id, c.identificacion, CONCAT(c.nombres,' ',c.apellidos), "
+    @Query("SELECT new org.wispcrm.modelo.ClienteDTO" +
+            "(c.id, c.identificacion, CONCAT(c.nombres,' ',c.apellidos), "
             + "c.email, c.telefono,  p.precio, c.estado) " + " FROM Cliente c JOIN c.planes p ")
     List<ClienteDTO> lista();
 
     @Query("SELECT new org.wispcrm.modelo.EditarClienteDTO(c.id, c.identificacion, c.nombres, c.apellidos , "
-            + " c.email, c.direccion, c.telefono, p.nombre, p.id, c.diaPago) "
+            + " c.email, c.direccion, c.telefono, p.id, c.diapago) "
             + " FROM Cliente c JOIN c.planes p  WHERE c.id = :id")
     EditarClienteDTO editarCliente(@Param("id") Integer id);
 

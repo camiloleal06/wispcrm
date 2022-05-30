@@ -1,6 +1,5 @@
 package org.wispcrm.modelo;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

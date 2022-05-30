@@ -17,7 +17,6 @@ public class EditarClienteDTO {
     private String email;
     private String direccion;
     private String telefono;
-    private String planes;
-    private int idPago;
+    private int plan;
     private int diaPago;
 }

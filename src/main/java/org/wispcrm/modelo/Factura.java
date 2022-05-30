@@ -15,17 +15,20 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.ToString;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Table(name = "facturas")
 public class Factura implements Serializable {
 
@@ -34,8 +37,10 @@ public class Factura implements Serializable {
     private int id;
     @Column(name = "estado")
     private boolean estado;
+
     @Column(name = "periodo")
     private int periodo;
+
     @Column(name = "create_at")
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -46,9 +51,12 @@ public class Factura implements Serializable {
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fechavencimiento;
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne(fetch = FetchType.EAGER)
     private Cliente cliente;
+
     private double valor;
+
     private int notificacion;
 
     @PrePersist
@@ -57,4 +65,5 @@ public class Factura implements Serializable {
         estado = true;
 
     }
+
 }

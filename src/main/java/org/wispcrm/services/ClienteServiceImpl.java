@@ -38,17 +38,16 @@ public class ClienteServiceImpl implements ClienteInterface {
     @Override
     public void save(Cliente cliente) {
         clienteDao.save(cliente);
-
     }
 
     @Override
     public Cliente findOne(Integer id) {
-        return clienteDao.findById(id).orElseThrow(() -> new NotFoundException("No Existe el cliente con ID : " + id));
+        return clienteDao.findById(id).orElseThrow(() -> new NotFoundException("No existe el cliente"));
     }
-
     @Override
     public void delete(Integer id) {
-        clienteDao.deleteById(id);
+       Cliente cliente = this.findById(id);
+        clienteDao.deleteById(cliente.getId());
     }
 
     @Override
@@ -91,7 +90,7 @@ public class ClienteServiceImpl implements ClienteInterface {
 
     @Override
     public Cliente findFirstClienteByDiapago(int diapago) {
-        return clienteDao.findFirstClienteByDiaPago(diapago)
+        return clienteDao.findFirstClienteByDiapago(diapago)
                 .orElseThrow(() -> new NotFoundException("No existe cliente con Dia de Pago: " + diapago));
     }
 

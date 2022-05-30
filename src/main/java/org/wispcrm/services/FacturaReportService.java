@@ -33,14 +33,14 @@ public class FacturaReportService {
 
     private static final String FACTURA_ID = "factura_id";
 
-    @Value("${invoice.template.path}")
+     @Value("${invoice.template.path}")
     private String invoiceTemplate;
 
     @Value("${recibo.template.path}")
     private String reciboTemplate;
 
-    @Autowired
     @Qualifier("jdbcTemplate")
+    @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Transactional
@@ -48,12 +48,9 @@ public class FacturaReportService {
         InputStream stream = this.getClass().getResourceAsStream(invoiceTemplate);
         JasperReport report = JasperCompileManager.compileReport(stream);
         Map<String, Object> parameters = new HashMap<>();
-        Connection connection = null;
         parameters.put(FACTURA_ID, id);
         DataSource dataSource = jdbcTemplate.getDataSource();
-        if (null != dataSource)
-            connection = dataSource.getConnection();
-        return JasperFillManager.fillReport(report, parameters, connection);
+        return JasperFillManager.fillReport(report, parameters, dataSource.getConnection());
     }
 
     @Transactional
@@ -105,7 +102,6 @@ public class FacturaReportService {
     private JasperReport loadTemplate() throws JRException {
         final InputStream reportInputStream = getClass().getResourceAsStream(invoiceTemplate);
         final JasperDesign jasperDesign = JRXmlLoader.load(reportInputStream);
-
         return JasperCompileManager.compileReport(jasperDesign);
     }
 
@@ -115,7 +111,6 @@ public class FacturaReportService {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put(FACTURA_ID, id);
         DataSource dataSource = jdbcTemplate.getDataSource();
-        if (dataSource != null) {
             try (Connection connection = dataSource.getConnection()) {
                 JasperPrint print = JasperFillManager.fillReport(report, parameters, connection);
                 JasperExportManager.exportReportToPdfFile(print, cliente);
@@ -124,5 +119,4 @@ public class FacturaReportService {
                 e.printStackTrace();
             }
         }
-    }
 }

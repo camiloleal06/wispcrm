@@ -16,12 +16,13 @@ public interface InterfacePagos extends JpaRepository<Pago, Integer> {
     @Query(value = "SELECT sum(pago) FROM Pago WHERE MONTH(fechaPago)=MONTH(CURRENT_TIMESTAMP)")
     public Long pagadas();
 
-    @Query("SELECT new org.wispcrm.modelo.PagoDTO(p.id, p.pago , f.id, CONCAT(c.nombres,' ',c.apellidos), p.fechaPago, f.estado) "
-            + "FROM Pago p JOIN p.factura f JOIN f.cliente c WHERE f.periodo=2 ")
+    @Query("SELECT new org.wispcrm.modelo.PagoDTO"
+            + "(p.id, p.pago , f.id, CONCAT(c.nombres,' ',c.apellidos), p.fechaPago, f.estado) "
+            + "FROM Pago p JOIN p.factura f JOIN f.cliente c WHERE f.periodo=MONTH(CURRENT_TIMESTAMP)+1")
     public List<PagoDTO> lista();
 
     @Query("SELECT new org.wispcrm.modelo.PagoDTO(p.id, p.pago , f.id, CONCAT(c.nombres,' ',c.apellidos), p.fechaPago, f.estado) "
-            + "FROM Pago p JOIN p.factura f JOIN f.cliente c WHERE f.periodo=2 ")
+            + "FROM Pago p JOIN p.factura f JOIN f.cliente c WHERE f.periodo=MONTH(CURRENT_TIMESTAMP)+1")
     public Page<PagoDTO> lista(Pageable pageable);
 
 }

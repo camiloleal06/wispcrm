@@ -1,2 +1,17 @@
 
-X	java:S125"<This block of commented-out lines of code should be removed.(†şË8éÉ€Û‡0
+V
+java:S4684P"@Replace this persistent entity with a simple POJO or DTO object.(­öÃ¤
+V	java:S125Z"<This block of commented-out lines of code should be removed.(Ìšğòşÿÿÿÿ
+V	java:S125l"<This block of commented-out lines of code should be removed.(ü‹Î–üÿÿÿÿ
+W	java:S125Œ"<This block of commented-out lines of code should be removed.(éØ»Úûÿÿÿÿ
+R	java:S125‘"<This block of commented-out lines of code should be removed.(†şË
+[
+java:S1128"@Remove this unused import 'org.wispcrm.modelo.EditarClienteDTO'.(çµû­ıÿÿÿÿ
+O
+java:S1128"4Remove this unused import 'org.wispcrm.modelo.Plan'.(²ï£¦øÿÿÿÿ
+D
+java:S1068 ")Remove this unused "ERROR" private field.(ò¨°£üÿÿÿÿ
+A
+java:S1068!"+Remove this unused "WARNING" private field.(ª
+F
+java:S1068#"1Remove this unused "REDIRECT_FORM" private field.(º Ë	

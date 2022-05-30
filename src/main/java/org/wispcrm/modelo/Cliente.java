@@ -18,18 +18,18 @@ import javax.persistence.TemporalType;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "Clientes")
 @Getter
 @Setter
 @NoArgsConstructor
-@Builder
 @AllArgsConstructor
+@ToString
 public class Cliente implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -38,7 +38,7 @@ public class Cliente implements Serializable {
 
     private int id;
     private String identificacion;
-    private int diaPago;
+    private int diapago;
     private String nombres;
     private String apellidos;
     private String email;
@@ -48,8 +48,10 @@ public class Cliente implements Serializable {
     private EstadoCliente estado = EstadoCliente.ACTIVO;
     @Column(name = "create_at")
     @Temporal(TemporalType.DATE)
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createAt;
+
     @ManyToOne(fetch = FetchType.EAGER)
     private Plan planes;
 

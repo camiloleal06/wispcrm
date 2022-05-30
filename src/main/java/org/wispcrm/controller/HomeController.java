@@ -25,19 +25,24 @@ public class HomeController {
     @GetMapping("/")
     public String home(Model modelo) {
         modelo.addAttribute("numeroclientes", clienteDao.count());
-        modelo.addAttribute("numerofacturas", facturaDao.facturas());
-        modelo.addAttribute("cantidad", formatearMoneda(facturaDao.pendientes()));
-        modelo.addAttribute("pagadas", formatearMoneda(facturaDao.pagadas()));
+        modelo.addAttribute("totalpendientemes", formatearMoneda(facturaDao.totalFacturasPendientesMes()));
+        modelo.addAttribute("cantidadfacturaspendientesmes", facturaDao.totalCantidadFacturasMes());
+        modelo.addAttribute("totalpagadasmes", formatearMoneda(facturaDao.totalFacturasPagadasMes()));
+
+        modelo.addAttribute("numeroclientes", clienteDao.count());
+        modelo.addAttribute("totalpendientehistorico", formatearMoneda(facturaDao.totalFacturasPendientesHistorico()));
+        modelo.addAttribute("cantidadfacturaspendienteshistorico", facturaDao.totalCantidadFacturasHistorico());
+        modelo.addAttribute("totalpagadashistorico", formatearMoneda(facturaDao.totalFacturasPagadasHistorico()));
+
         return "home";
     }
 
     private Object formatearMoneda(Long numero) {
         Locale locale = new Locale("es", "CO");
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(locale);
-        if(null!=numero) {
+        if (null != numero) {
             return currencyFormatter.format(numero.doubleValue());
-        }
-        else{
+        } else {
             return currencyFormatter.format(0.0);
         }
     }

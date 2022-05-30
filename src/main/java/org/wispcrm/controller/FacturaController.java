@@ -26,7 +26,6 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.wispcrm.daos.InterfacePagos;
 import org.wispcrm.interfaces.ClienteInterface;
-import org.wispcrm.interfaces.PlanInterface;
 import org.wispcrm.modelo.Cliente;
 import org.wispcrm.modelo.Factura;
 import org.wispcrm.modelo.Pago;
@@ -45,9 +44,12 @@ import net.sf.jasperreports.engine.JasperPrint;
 @Controller
 @SessionAttributes("factura")
 public class FacturaController {
+    private static final String REDIRECT_LISTAR = "redirect:/listar";
+    private static final int DIA_PAGO_INICIAL = 11;
+    private static final int DIA_PAGO_FINAL = 25;
     private static final String LLEGO_TU_FACTURA_DE_INTERNET = "Llegó tu factura de Internet!";
     private static final String SE_HA_GENERADO_UNA_NUEVA_FACTURA_DE_SU_SERVICIO_DE_INTERNET = " se ha generado una nueva factura de su servicio de Internet ";
-    private static final String ADMINISTRACION_TECNOWISP_COM_CO = "administracion@tecnowisp.com.co";
+    private static final String EMAIL_TO = "sysredcartagena@gmail.com";
     private static final String ESTIMADO_A_CLIENTE = "Estimado(a) Cliente ";
     private static final String SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA = " se ha generado una nueva factura a su nombre Gracias por su Preferencia";
     private static final String ESTIMADO_A = "Estimado(a) ";
@@ -58,7 +60,7 @@ public class FacturaController {
     private InterfacePagos pagosD;
 
     @Autowired
-    private ClienteServiceImpl dataCliente;
+    private ClienteServiceImpl clienteService;
 
     @Autowired
     ClienteInterface clienteDao;
@@ -75,9 +77,6 @@ public class FacturaController {
     @Autowired
     private EnviarSMS smsService;
 
-    @Autowired
-    private PlanInterface planDao;
-
     Calendar fechaactual = Calendar.getInstance();
     Calendar fechavencimiento = Calendar.getInstance();
     int diaactual = fechaactual.get(Calendar.DAY_OF_MONTH);
@@ -87,27 +86,45 @@ public class FacturaController {
     private static final String LISTAR_FACTURA = "factura/listaFactura";
     private static final String LISTAR_PAGO = "factura/listaPago";
 
+    /**
+     * 
+     * @param clienteID
+     * @param modelo
+     * @param flash
+     * @return
+     */
     @RequestMapping(value = "/factura")
     public String crear(@RequestParam(name = "clienteID") Integer clienteID, Model modelo, RedirectAttributes flash) {
-        Cliente cliente = dataCliente.findOne(clienteID);
+        Cliente cliente = clienteService.findOne(clienteID);
         if (cliente == null) {
             flash.addFlashAttribute("error", "El cliente no existe en la Base de datos");
             return LISTAR_CLIENTE;
         }
         Factura factura = new Factura();
         factura.setCliente(cliente);
-        modelo.addAttribute("listaplan", planDao.findOne(clienteID));
+        modelo.addAttribute("listaplan", cliente.getPlanes());
         modelo.addAttribute("factura", factura);
         modelo.addAttribute("titulo", "Nueva Factura");
         return VER_FORMULARIO_FACTURA;
     }
 
+    /**
+     * 
+     * @param modelo
+     * @return
+     */
     @RequestMapping(value = "/listarfactura")
     public String listarfactura(Model modelo) {
         modelo.addAttribute("listafactura", facturaDao.listadoFacturas());
         return LISTAR_FACTURA;
     }
 
+    /**
+     * 
+     * @param id
+     * @param model
+     * @return
+     */
     @GetMapping(value = "/listarfacturaid")
     public String verfac(@RequestParam(name = "id") Integer id, Model model) {
         model.addAttribute("facturasid", facturaDao.findFacturabyid(id));
@@ -115,8 +132,14 @@ public class FacturaController {
 
     }
 
+    /**
+     * 
+     * @param id
+     * @param flash
+     * @return
+     */
     @GetMapping("/pagar/{id}")
-    public String pagar(@PathVariable("id") int id, SessionStatus status, Model modelo, RedirectAttributes flash) {
+    public String pagar(@PathVariable("id") int id, RedirectAttributes flash) {
         Factura factura = facturaDao.findFacturabyid(id);
         Pago pago = new Pago();
         pago.setPago(factura.getValor());
@@ -132,13 +155,55 @@ public class FacturaController {
             e.printStackTrace();
         }
         smsService.enviarSMS(factura.getCliente().getTelefono(),
-                ESTIMADO_A + factura.getCliente().getNombres() + " hemos recibido su pago "
-                        + " http://sysredcartagena.duckdns.org:8888/descargarpago/" + factura.getId());
+                ESTIMADO_A + factura.getCliente().getNombres() + " hemos recibido su pago ");
         flash.addFlashAttribute("info", "Pago agregado correctamente");
-        status.setComplete();
         return REDIRECT_LISTARFACTURA;
     }
 
+    @GetMapping("/pagarmultiple")
+    public String pagarMultiple(@RequestParam(name = "present", defaultValue = "0") List<String> values,
+            RedirectAttributes flash) {
+
+        Pago pago = new Pago();
+
+        values.parallelStream().forEach(item -> {
+            Factura factura = facturaDao.findFacturabyid(Integer.valueOf(item));
+            pago.setPago(factura.getValor());
+            pago.setSaldo(0);
+            pago.setFactura(factura);
+            factura.setEstado(false);
+            // pagosDAO.save(pago);
+            // facturaDao.save(factura);
+            System.out.println(factura.toString());
+        });
+
+        flash.addFlashAttribute("info", " Pago agregado correctamente " + values.size());
+        return REDIRECT_LISTARFACTURA;
+    }
+
+    /*
+     * 
+     * 
+     * try { reporte.pagoPdfReport(factura.getId(), pago.getId() + "_" +
+     * factura.getCliente().getNombres() + ".pdf");
+     * 
+     * } catch (JRException e) { e.printStackTrace(); }
+     * smsService.enviarSMS(factura.getCliente().getTelefono(), ESTIMADO_A +
+     * factura.getCliente().getNombres() + " hemos recibido su pago ");
+     * flash.addFlashAttribute("info", "Pago agregado correctamente"); return
+     * REDIRECT_LISTARFACTURA;
+     */
+
+    /// @RequestParam("present") List<String> values
+
+    /**
+     * 
+     * @param id
+     * @param status
+     * @param modelo
+     * @param flash
+     * @return
+     */
     @GetMapping("/recordar/{id}")
     public String recordar(@PathVariable("id") int id, SessionStatus status, Model modelo, RedirectAttributes flash) {
         Factura factura = facturaDao.findFacturabyid(id);
@@ -156,6 +221,14 @@ public class FacturaController {
         return REDIRECT_LISTARFACTURA;
     }
 
+    /**
+     * 
+     * @param id
+     * @param status
+     * @param modelo
+     * @param flash
+     * @return
+     */
     @GetMapping("/avisocorte/{id}")
     public String avisocorte(@PathVariable("id") int id, SessionStatus status, Model modelo, RedirectAttributes flash) {
         Factura factura = facturaDao.findFacturabyid(id);
@@ -168,6 +241,14 @@ public class FacturaController {
         return REDIRECT_LISTARFACTURA;
     }
 
+    /**
+     * 
+     * @param id
+     * @param status
+     * @param modelo
+     * @param flash
+     * @return
+     */
     @GetMapping("/eliminarfactura/{id}")
     public String eliminarfactura(@PathVariable("id") int id, SessionStatus status, Model modelo,
             RedirectAttributes flash) {
@@ -179,37 +260,50 @@ public class FacturaController {
         return REDIRECT_LISTARFACTURA;
     }
 
+    /**
+     * 
+     * @param factura
+     * @param flash
+     * @param result
+     * @return
+     */
     @PostMapping("/savefactura")
-    public String facturar(@Validated Factura factura, RedirectAttributes flash, BindingResult result) {
+    public String crearFacturaAndSendSms(@Validated Factura factura, RedirectAttributes flash, BindingResult result) {
         fechavencimiento.setTime(new Date());
-        fechavencimiento.set(Calendar.DAY_OF_MONTH, factura.getCliente().getDiaPago());
+        fechavencimiento.set(Calendar.DAY_OF_MONTH, factura.getCliente().getDiapago());
         factura.setFechapago(fechavencimiento.getTime());
         factura.setFechavencimiento(fechavencimiento.getTime());
         factura.setValor(factura.getCliente().getPlanes().getPrecio());
         factura.setNotificacion(0);
         factura.setPeriodo(LocalDate.now().getMonthValue() + 1);
-        dataCliente.saveFactura(factura);
+        clienteService.saveFactura(factura);
+        sendSms(factura.getCliente().getTelefono(), factura.getCliente().getNombres(), factura.getId());
         flash.addFlashAttribute("info", "Se ha generado una factura a " + factura.getCliente().getNombres() + " "
                 + factura.getCliente().getApellidos() + " correctamente");
-        return "redirect:/listar";
+        return REDIRECT_LISTAR;
     }
 
+    /**
+     * 
+     * @param flash
+     * @param modelo
+     * @return
+     */
     @GetMapping("/facturar")
-    public String facturarEnLote(RedirectAttributes flash, BindingResult result, Model modelo) {
+    public String facturarEnLote(RedirectAttributes flash, Model modelo) {
         List<Cliente> cliente = clienteDao.findAll();
         int x = 0;
         int sum = 0;
         while (x < cliente.size()) {
             Factura factura = new Factura();
             fechavencimiento.setTime(new Date());
-            if (cliente.get(x).getDiaPago() < 11 && diaactual > 25) {
-                int diapago = cliente.get(x).getDiaPago();
+            if (cliente.get(x).getDiapago() < DIA_PAGO_INICIAL && diaactual > DIA_PAGO_FINAL) {
+                int diapago = cliente.get(x).getDiapago();
                 save(factura, diapago, cliente.get(x), 1);
                 sum = sum + 1;
                 send(factura);
-            }
-            else if (cliente.get(x).getDiaPago() >= 11 && diaactual < 25) {
-                int diapago = cliente.get(x).getDiaPago();
+            } else if (cliente.get(x).getDiapago() >= DIA_PAGO_INICIAL && diaactual < DIA_PAGO_FINAL) {
+                int diapago = cliente.get(x).getDiapago();
                 save(factura, diapago, cliente.get(x), 0);
                 sum = sum + 1;
                 send(factura);
@@ -220,9 +314,37 @@ public class FacturaController {
         flash.addFlashAttribute("info", "Se han generado : " + sum + " facturas");
         List<Cliente> clientes = clienteDao.findAll();
         modelo.addAttribute("cliente", clientes);
-        return "redirect:/listar";
+        return REDIRECT_LISTAR;
     }
 
+    /**
+     * 
+     * @param flash
+     * @param id
+     * @return
+     */
+    @GetMapping("/facturar/{id}")
+    public String facturarUno(RedirectAttributes flash, @PathVariable("id") int id) {
+        Cliente cliente = clienteDao.findById(id);
+        Factura factura = new Factura();
+        fechavencimiento.setTime(new Date());
+        int diapago = cliente.getDiapago();
+        save(factura, diapago, cliente, 1);
+        smsService.enviarSMS(cliente.getTelefono(), "Se ha generado su factura de internet");
+        flash.addFlashAttribute("info", "Se han generado la Factura");
+
+        return REDIRECT_LISTAR;
+    }
+
+    /**
+     * 
+     * @param id
+     * @param flash
+     * @param response
+     * @throws IOException
+     * @throws JRException
+     * @throws SQLException
+     */
     @GetMapping("/descargarfactura/{id}")
     public void descargarfactura(@PathVariable(value = "id") Integer id, RedirectAttributes flash,
             HttpServletResponse response) throws IOException, JRException, SQLException {
@@ -237,6 +359,14 @@ public class FacturaController {
         }
     }
 
+    /**
+     * 
+     * @param id
+     * @param flash
+     * @param response
+     * @throws IOException
+     * @throws JRException
+     */
     @GetMapping("/descargarpago/{id}")
     public void descargarpago(@PathVariable(value = "id") Integer id, RedirectAttributes flash,
             HttpServletResponse response) throws IOException, JRException {
@@ -251,6 +381,11 @@ public class FacturaController {
         }
     }
 
+    /**
+     * 
+     * @param modelo
+     * @return
+     */
     @RequestMapping(value = "/listarpago")
     public String listarpago(Model modelo) {
         List<PagoDTO> pago = pagosD.lista();
@@ -258,6 +393,14 @@ public class FacturaController {
         return LISTAR_PAGO;
     }
 
+    /**
+     * 
+     * @param factura
+     * @param diapago
+     * @param cliente
+     * @param periodo
+     * @return
+     */
     private Factura save(Factura factura, int diapago, Cliente cliente, int periodo) {
         fechavencimiento.add(Calendar.MONTH, 1);
         fechavencimiento.set(Calendar.DAY_OF_MONTH, diapago);
@@ -267,9 +410,15 @@ public class FacturaController {
         factura.setValor(cliente.getPlanes().getPrecio());
         factura.setNotificacion(0);
         factura.setPeriodo(LocalDate.now().getMonthValue() + periodo);
-          return facturaDao.save(factura);
+        Factura facturaSend = facturaDao.save(factura);
+        sendEmail(facturaSend.getId(), cliente);
+        return facturaSend;
     }
 
+    /**
+     * 
+     * @param factura
+     */
     private void send(Factura factura) {
         int id = factura.getId();
         String client = factura.getCliente().getIdentificacion();
@@ -283,14 +432,41 @@ public class FacturaController {
         String body = ESTIMADO_A_CLIENTE + nombres
                 + SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA;
         String email = factura.getCliente().getEmail();
-        String tel = factura.getCliente().getTelefono();
-        mailService.sendEmailAttachment(LLEGO_TU_FACTURA_DE_INTERNET, body, ADMINISTRACION_TECNOWISP_COM_CO, email,
-                true, new File(client + ".pdf"));
-        if (tel.length() == 10) {
-            smsService.enviarSMS(factura.getCliente().getTelefono(),
-                    ESTIMADO_A + factura.getCliente().getNombres()
-                            + SE_HA_GENERADO_UNA_NUEVA_FACTURA_DE_SU_SERVICIO_DE_INTERNET
-                            + "http://sysredcartagena.duckdns.org:8081/descargarfactura/" + factura.getId());
+        mailService.sendEmailAttachment(LLEGO_TU_FACTURA_DE_INTERNET, body, EMAIL_TO, email, true,
+                new File(client + ".pdf"));
+    }
+
+    /**
+     * 
+     * @param telefonoCliente
+     * @param nombresCliente
+     * @param facturaId
+     */
+    private void sendSms(String telefonoCliente, String nombresCliente, int facturaId) {
+        smsService.enviarSMS(telefonoCliente,
+                ESTIMADO_A + nombresCliente + SE_HA_GENERADO_UNA_NUEVA_FACTURA_DE_SU_SERVICIO_DE_INTERNET
+                        + "http://sysredcartagena.duckdns.org:8081/descargarfactura/" + facturaId);
+    }
+
+    /**
+     * 
+     * @param facturaId
+     * @param cliente
+     */
+    private void sendEmail(int facturaId, Cliente cliente) {
+        String nombres = cliente.getNombres() + ' ' + cliente.getApellidos();
+        String email = cliente.getEmail();
+        String client = cliente.getIdentificacion();
+        String body = ESTIMADO_A_CLIENTE + nombres
+                + SE_HA_GENERADO_UNA_NUEVA_FACTURA_A_SU_NOMBRE_GRACIAS_POR_SU_PREFERENCIA;
+        try {
+            reporte.createPdfReport(facturaId, client + ".pdf");
+            mailService.sendEmailAttachment(LLEGO_TU_FACTURA_DE_INTERNET, body, EMAIL_TO, email, true,
+                    new File(client + ".pdf"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
 }

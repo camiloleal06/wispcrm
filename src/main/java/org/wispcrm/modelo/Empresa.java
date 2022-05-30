@@ -28,5 +28,4 @@ public class Empresa {
 	private String razonsocial;
 	private String ciudad;
 	private String email;
-
 }

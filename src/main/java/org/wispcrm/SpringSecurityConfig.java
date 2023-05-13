@@ -21,14 +21,14 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests().antMatchers("/build/", "/dist/**", "/plugins/**", "/docs/**").permitAll()
-                .antMatchers("/descargarfactura/**").permitAll().antMatchers("/api/**").permitAll()
-                .antMatchers("/descargarpago/**").permitAll().antMatchers("/cliente/**").hasAnyRole(USER)
-                .antMatchers("/editar/**").hasAnyRole(ADMIN).antMatchers("/eliminar/**").hasAnyRole(ADMIN)
-                .antMatchers("/listar/**").hasAnyRole(USER, ADMIN).antMatchers("/layout/**").hasAnyRole(USER)
-                .antMatchers("/plan/**").hasAnyRole(ADMIN, USER).antMatchers("/factura/**").hasAnyRole(ADMIN)
-                .antMatchers("/vercliente").hasAnyRole(ADMIN).anyRequest().authenticated().and().formLogin()
-                .successHandler(successHandler).permitAll().and().logout().permitAll().and().exceptionHandling()
-                .accessDeniedPage("/error_403");
+                .antMatchers("/descargarfactura/**").permitAll().antMatchers("/descargarorden/**").permitAll()
+                .antMatchers("/api/**").permitAll().antMatchers("/descargarpago/**").permitAll()
+                .antMatchers("/cliente/**").hasAnyRole(USER).antMatchers("/editar/**").hasAnyRole(ADMIN)
+                .antMatchers("/eliminar/**").hasAnyRole(ADMIN).antMatchers("/listar/**").hasAnyRole(USER, ADMIN)
+                .antMatchers("/layout/**").hasAnyRole(USER).antMatchers("/plan/**").hasAnyRole(ADMIN, USER)
+                .antMatchers("/factura/**").hasAnyRole(ADMIN).antMatchers("/vercliente").hasAnyRole(ADMIN).anyRequest()
+                .authenticated().and().formLogin().successHandler(successHandler).permitAll().and().logout().permitAll()
+                .and().exceptionHandling().accessDeniedPage("/error_403");
 
     }
 
@@ -37,6 +37,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         UserBuilder users = User.builder().passwordEncoder(encoder::encode);
         build.inMemoryAuthentication().withUser(users.username("camiloleal").password("T3CN02020+-+").roles(ADMIN))
-                .withUser(users.username("fernando").password("Fernando2020+-").roles(USER));
+                .withUser(users.username("fernando").password("Fernando2020+-").roles(ADMIN))
+                .withUser(users.username("audiluz").password("audiluz").roles(ADMIN));
     }
 }

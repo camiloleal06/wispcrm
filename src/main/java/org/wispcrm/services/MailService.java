@@ -7,6 +7,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
@@ -17,11 +18,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class MailService {
 
-    public MailService(JavaMailSender javaMailSender) {
-        this.javaMailSender = javaMailSender;
-    }
-
-    private final JavaMailSender javaMailSender;
+    @Autowired
+    JavaMailSender javaMailSender;
 
     public void sendMail(String from, String to, String subject, String body) {
         SimpleMailMessage mail = new SimpleMailMessage();

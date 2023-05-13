@@ -56,7 +56,9 @@ public class EnviarSMS {
                 System.out.println("Compruebe que ha configurado correctamente la direccion/url ");
                 System.out.println("suministrada por Altiria");
                 return;
-            } else {
+            }
+
+            else {
                 // Se procesa la respuesta capturada en la cadena 'response'
                 if (resp.startsWith("ERROR")) {
                     System.out.println(resp);

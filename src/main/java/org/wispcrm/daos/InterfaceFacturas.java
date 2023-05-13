@@ -21,16 +21,17 @@ public interface InterfaceFacturas extends CrudRepository<Factura, Integer> {
     List<FacturaDto> findFacturaDtoByEstado(boolean f);
 
     @Query("SELECT new org.wispcrm.modelo.FacturaDto(f.id, CONCAT(c.nombres,' ',c.apellidos) as nombres, "
-            + "c.telefono,  f.valor) " + " FROM Factura f JOIN f.cliente c WHERE f.estado=true ")
+            + "c.telefono,  f.valor, c.diapago, DATEDIFF(CURRENT_TIMESTAMP() , f.fechapago) as mora) "
+            + " FROM Factura f JOIN f.cliente c WHERE f.estado=true ")
     List<FacturaDto> listadoFacturasPendientes();
 
-    @Query(value = "SELECT sum(valor) FROM Factura WHERE estado=true and periodo=MONTH(CURRENT_TIMESTAMP)+1")
+    @Query(value = "SELECT sum(valor) FROM Factura WHERE estado=true and periodo=MONTH(CURRENT_TIMESTAMP)")
     public Long totalFacturasPendientesMes();
 
-    @Query(value = "SELECT count(*) FROM Factura WHERE estado=true and periodo=MONTH(CURRENT_TIMESTAMP)+1")
+    @Query(value = "SELECT count(*) FROM Factura WHERE estado=true and periodo=MONTH(CURRENT_TIMESTAMP)")
     public Long totalCantidadFacturasMes();
 
-    @Query(value = "SELECT sum(valor) FROM Factura WHERE estado=false and periodo=MONTH(CURRENT_TIMESTAMP)+1")
+    @Query(value = "SELECT sum(valor) FROM Factura WHERE estado=false and periodo=MONTH(CURRENT_TIMESTAMP)")
     public Long totalFacturasPagadasMes();
 
     @Query(value = "SELECT sum(valor) FROM Factura WHERE estado=true")
@@ -41,4 +42,7 @@ public interface InterfaceFacturas extends CrudRepository<Factura, Integer> {
 
     @Query(value = "SELECT sum(valor) FROM Factura WHERE estado=false")
     public Long totalFacturasPagadasHistorico();
+
+    @Query(value = "SELECT count(*) FROM Factura WHERE estado=false and periodo=MONTH(CURRENT_TIMESTAMP)")
+    public int existFacturaCreada();
 }

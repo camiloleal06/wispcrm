@@ -47,7 +47,9 @@
 									method="post">
 									<div class="form-row col-md-12">
 										<div class="form-group col-md-4">
-											<input type="hidden" th:value="${factura.cliente.id}" /> <label
+											<input type="hidden" th:value="${factura.cliente.id}" />
+											
+											 <label
 												for="identificacion">Numero de Identificacion</label> <input
 												type="text" th:value="${factura.cliente.identificacion}"
 												class="form-control" id="identificacion" readonly="readonly">

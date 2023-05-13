@@ -16,9 +16,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.wispcrm.daos.ClienteDao;
 import org.wispcrm.daos.InterfaceFacturas;
+import org.wispcrm.interfaces.OrdenInterface;
 import org.wispcrm.modelo.Cliente;
 import org.wispcrm.modelo.ClienteDTO;
+import org.wispcrm.modelo.EstadoCliente;
 import org.wispcrm.services.ClienteServiceImpl;
 import org.wispcrm.services.EnviarSMS;
 import org.wispcrm.services.PlanServiceImpl;
@@ -27,10 +30,7 @@ import org.wispcrm.services.PlanServiceImpl;
 public class ClienteController {
     private static final String CLASE = "clase";
     private static final String SUCCESS = "success";
-    private static final String ERROR = "error";
-    private static final String WARNING = "warning";
     private static final String REDIRECT_LISTAR = "redirect:/listar";
-    private static final String REDIRECT_FORM = "redirect:/form";
     private static final String TITULO = "titulo";
     private static final String CLIENTE = "cliente";
     private static final String VER_LISTA_CLIENTE = "cliente/listaCliente";
@@ -46,10 +46,16 @@ public class ClienteController {
     ClienteServiceImpl clienteService;
 
     @Autowired
+    ClienteDao clienteRepository;
+
+    @Autowired
     InterfaceFacturas daoFacturas;
 
     @Autowired
     PlanServiceImpl planDao;
+
+    @Autowired
+    OrdenInterface ordenInterface;
 
     @GetMapping(value = "/vercliente")
     public String ver(@RequestParam(name = "id") Integer id, Map<String, Object> model) {
@@ -61,7 +67,7 @@ public class ClienteController {
 
     @GetMapping("/listar")
     public String listarClientes(Model modelo) {
-        List<ClienteDTO> cliente = clienteService.listaClientes();
+        List<ClienteDTO> cliente = clienteRepository.lista();
         modelo.addAttribute(CLIENTE, cliente);
         return VER_LISTA_CLIENTE;
     }
@@ -93,8 +99,8 @@ public class ClienteController {
      */
     @RequestMapping(value = "/editar")
     public String editar(@RequestParam(name = "id") Integer id, Model modelo) {
-        modelo.addAttribute(CLIENTE, clienteService.editarCliente(id));
-        modelo.addAttribute("listaplan", planService.findAll());
+        modelo.addAttribute(CLIENTE, clienteService.findById(id));
+        modelo.addAttribute("listaplan", planService.listPlanes());
         modelo.addAttribute(TITULO, "Actualizar Cliente");
         return VER_FORM_CLIENTE;
     }
@@ -106,12 +112,24 @@ public class ClienteController {
                 "SYSRED INFORMA : En esta NAVIDAD aumentamos el ancho de banda de tu conexion de internet a 10 Mb, sin costo adicional");
         flash.addFlashAttribute("info", "El mensaje ha sido enviado ");
         status.setComplete();
+
         return REDIRECT_LISTAR;
     }
 
     @GetMapping("/eliminar/{id}")
     public String eliminar(@PathVariable int id) {
-        clienteService.delete(id);
+        Cliente cliente = clienteService.findById(id);
+        cliente.setEstado(EstadoCliente.INACTIVO);
+        clienteRepository.save(cliente);
         return REDIRECT_LISTAR;
     }
+
+    @GetMapping("/reactivar/{id}")
+    public String reactivar(@PathVariable int id) {
+        Cliente cliente = clienteService.findById(id);
+        cliente.setEstado(EstadoCliente.ACTIVO);
+        clienteRepository.save(cliente);
+        return REDIRECT_LISTAR;
+    }
+
 }

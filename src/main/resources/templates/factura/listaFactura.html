@@ -13,7 +13,6 @@
 		<nav th:replace="layout/layout :: menu"></nav>
 		<aside th:replace="layout/layout :: sidebar"></aside>
 		<div class="content-wrapper">
-
 			<!-- Content Header (Page header) -->
 			<div class="content-header">
 				<div id="notificacion" class="alert alert-success alert-dismissible fade show" role="alert"
@@ -69,86 +68,116 @@
 
 			<!-- Main content -->
 			<section class="content">
+				<!--	<form th:action="@{/pagarmultiple}">-->
 				<div class="container-fluid">
 					<div class="row">
 						<div class="col-12">
 							<div class="card">
 								<div class="card-header">
 									<h3 class="card-title">Listado de Facturas</h3>
+									<!--	<div style="display: flex; justify-content: flex-end">
+											<button type="submit" name="pagar" id="pagar" class="btn btn-info">Registrar
+												Pagos</button>
+										</div>-->
 								</div>
 								<!-- /.card-header -->
 								<div class="card-body">
-									<form th:action="@{/pagarmultiple}">
-										<table id="example1" class="table table-bordered table-striped">
-											<div style="display: flex; justify-content: flex-end">
-												<button type="submit" name="pagar" id="pagar"
-													class="btn btn-info" disabled>Registrar Pagos</button>
-											</div>
-											<thead>
-												<tr>
-													<th></th>
-													<th th:text="Id"></th>
-													<th th:text="Nombres"></th>
-													<th th:text="Telefono"></th>
-													<th th:text="Valor"></th>
-													<th></th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr th:each="factura: ${listafactura}">
-													<td>
-														<input type="checkbox" id="present" name="present"
-															th:value="${factura.idFactura}" 
-															 onchange="document.getElementById('pagar').disabled = !this.checked;" />
-													</td>
-													<td th:text="${factura.idFactura}"></td>
-													<td th:text="${factura.nombres}"></td>
-													<td th:text="${factura.telefonoCliente}">
-													<td
-														th:text="${#numbers.formatInteger(factura.valorFactura,0,'POINT')}">
-													</td>
-													<td><a th:onclick="pagar([[${factura.idFactura}]])"
-															class="btn btn-primary btn-sm" th:text="Pagar"></a> <a
-															th:onclick="eliminar([[${factura.idFactura}]])"
-															class="btn btn-danger btn-sm" th:text="Eliminar"></a>
-														<a class="btn btn-success btn-sm"
-															th:href="@{'descargarfactura/' + ${factura.idFactura}}"
-															th:text="'Descargar'">
-														</a>
+									<table id="example1" class="table table-bordered table-striped">
+										<thead>
+											<tr>
 
-														<a class="btn btn-warning btn-sm"
-															th:href="@{'recordar/' + ${factura.idFactura}}"
-															th:text=" ' Recordatorio'">
-														</a>
+												<th th:text="Id"></th>
+												<th th:text="Nombres"></th>
+												<th th:text="Telefono"></th>
+												<th th:text="Valor"></th>
+												<th th:text="Dia_Pago"></th>
+												<th th:text="Mora"></th>
 
-														<a class="btn btn-warning btn-sm"
-															th:href="@{'avisocorte/' + ${factura.idFactura}}"
-															th:text=" ' Aviso'">
-														</a>
-														<a>
-															<span class="badge badge-info right" th:text="0"></span></a>
-													</td>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="factura: ${listafactura}">
+												<!---	<td>
 
-												</tr>
-											</tbody>
-											<tfoot>
-												<tr>
-													<th></th>
-													<th th:text="Id"></th>
-													<th th:text="Nombres"></th>
-													<th th:text="Telefono"></th>
-													<th th:text="Valor"></th>
-													<th></th>
-												</tr>
-											</tfoot>
-										</table>
+														<input id="present" name="present" type="checkbox"
+															th:value="${factura.idFactura}" />
 
-									</form>
+
+													</td>-->
+												<td th:text="${factura.idFactura}"></td>
+												<td th:text="${factura.nombres}"></td>
+												<td th:text="${factura.telefonoCliente}"></td>
+												<td th:text="${#numbers.formatInteger(factura.valorFactura,0,'POINT')}">
+												</td>
+												<td th:text="${factura.diapago}"></td>
+												<!--	<td th:text="${diaactual}-${factura.diapago}"></td>-->
+												
+												<td>
+													<th:block th:if="${factura.mora} > 7">
+														<span class="badge bg-danger"
+															th:text="${factura.mora}"></span>
+													</th:block>
+													<th:block th:unless="${factura.mora} > 7">
+														<span class="badge bg-success"
+															th:text="${factura.mora}"></span>
+												</td>
+
+												<!--<td>
+													<th:block th:if="${diaactual}-${factura.diapago} > 7">
+														<span class="badge bg-danger"
+															th:text="${diaactual}-${factura.diapago}"></span>
+													</th:block>
+													<th:block th:unless="${diaactual}-${factura.diapago} > 7">
+														<span class="badge bg-success"
+															th:text="${diaactual}-${factura.diapago}"></span>
+												</td>-->
+
+
+												<td><a th:onclick="pagar([[${factura.idFactura}]])"
+														class="btn btn-primary btn-sm" th:text="Pagar"></a>
+														
+														<!--	<a
+														th:onclick="eliminar([[${factura.idFactura}]])"
+														class="btn btn-danger btn-sm" th:text="Eliminar">
+														-->
+													 <a
+														th:href="@{'eliminarfactura/' + ${factura.idFactura}}"
+														class="btn btn-warning btn-sm" th:text="Eliminar"></a>
+													
+													<a class="btn btn-success btn-sm"
+														th:href="@{'descargarfactura/' + ${factura.idFactura}}"
+														th:text="'Descargar'">
+													</a>
+
+													<a class="btn btn-info btn-sm"
+														th:href="@{'recordar/' + ${factura.idFactura}}"
+														th:text=" ' Recordatorio'">
+													</a>
+
+													<a>
+														<span class="badge badge-info right" th:text="0"></span></a>
+												</td>
+
+											</tr>
+										</tbody>
+										<tfoot>
+											<tr>
+												<th></th>
+												<th th:text="Id"></th>
+												<th th:text="Nombres"></th>
+												<th th:text="Telefono"></th>
+												<th th:text="Valor"></th>
+												<th></th>
+											</tr>
+										</tfoot>
+									</table>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
+				</form>
 			</section>
 
 		</div>
@@ -163,6 +192,8 @@
 	<script src="plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
 	<script src="/dist/js/sweetalert.min.js"></script>
 	<script src="/dist/js/funciones.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/2.0.0/js/bootstrap-switch.min.js" integrity="sha512-eRI64H/+n22qknZMCMmIRYY/PIVxRdJizYRB+fMHJRT+qkTX0B/no3i2V7945KwxReUScbdICK+ToNslFjZ2ng==
+	" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 	<script>
 		$(function () {
@@ -209,7 +240,7 @@
 			$('#example2').DataTable({
 				"paging": true,
 				"lengthChange": false,
-				"searching": false,
+				"searching": true,
 				"ordering": true,
 				"info": true,
 				"autoWidth": false,
@@ -255,6 +286,9 @@
 
 				});
 		}
+	</script>
+	<script>
+		$('[data-toggle="switch"]').bootstrapSwitch();
 	</script>
 </body>
 

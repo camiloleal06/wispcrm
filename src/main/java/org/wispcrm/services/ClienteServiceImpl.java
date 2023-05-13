@@ -11,7 +11,6 @@ import org.wispcrm.excepciones.NotFoundException;
 import org.wispcrm.interfaces.ClienteInterface;
 import org.wispcrm.modelo.Cliente;
 import org.wispcrm.modelo.ClienteDTO;
-import org.wispcrm.modelo.EditarClienteDTO;
 import org.wispcrm.modelo.Factura;
 
 @Service
@@ -44,9 +43,10 @@ public class ClienteServiceImpl implements ClienteInterface {
     public Cliente findOne(Integer id) {
         return clienteDao.findById(id).orElseThrow(() -> new NotFoundException("No existe el cliente"));
     }
+
     @Override
     public void delete(Integer id) {
-       Cliente cliente = this.findById(id);
+        Cliente cliente = this.findById(id);
         clienteDao.deleteById(cliente.getId());
     }
 
@@ -94,9 +94,17 @@ public class ClienteServiceImpl implements ClienteInterface {
                 .orElseThrow(() -> new NotFoundException("No existe cliente con Dia de Pago: " + diapago));
     }
 
+    /*
+     * @Override public Cliente editarCliente(Integer id) { return
+     * clienteDao.editarCliente(id); }
+     */
+    public Cliente updateCliente(Integer id) {
+        return clienteDao.save(this.findById(id));
+    }
+
     @Override
-    public EditarClienteDTO editarCliente(Integer id) {
-        return clienteDao.editarCliente(id);
+    public List<Cliente> findByDiaPagoBetween(int diaInicia, int diaFinal) {
+        return clienteDao.findByDiapagoBetween(diaInicia, diaFinal);
     }
 
 }

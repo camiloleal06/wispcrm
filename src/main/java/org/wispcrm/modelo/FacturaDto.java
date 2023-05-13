@@ -14,4 +14,6 @@ public class FacturaDto {
     private String nombres;
     private String telefonoCliente;
     private double valorFactura;
+    private int diapago;
+    private int mora;
 }

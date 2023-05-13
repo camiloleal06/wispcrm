@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.wispcrm.modelo.Cliente;
 import org.wispcrm.modelo.ClienteDTO;
-import org.wispcrm.modelo.EditarClienteDTO;
 import org.wispcrm.modelo.Factura;
 
 public interface ClienteInterface {
@@ -37,6 +36,5 @@ public interface ClienteInterface {
 
     Cliente findFirstClienteByDiapago(int diapago);
 
-    EditarClienteDTO editarCliente(Integer id);
-
+    List<Cliente> findByDiaPagoBetween(int diaInicia, int diaFinal);
 }

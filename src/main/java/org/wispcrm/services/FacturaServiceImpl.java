@@ -10,6 +10,8 @@ import org.wispcrm.interfaces.FacturaInterface;
 import org.wispcrm.modelo.Factura;
 import org.wispcrm.modelo.FacturaDto;
 
+import javax.swing.text.StyledEditorKit;
+
 @Service
 public class FacturaServiceImpl implements FacturaInterface {
     @Autowired
@@ -66,4 +68,9 @@ public class FacturaServiceImpl implements FacturaInterface {
     public Factura save(Factura factura) {
         return facturaDao.save(factura);
     }
+
+    public boolean existeFacturaPeriodo(){
+        return facturaDao.existFacturaCreada() > 0 ? Boolean.TRUE : Boolean.FALSE;
+    }
+
 }

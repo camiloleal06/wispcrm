@@ -10,11 +10,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ClienteDTO {
-	private int id;
-	private String identificacion;
-	private String nombres;
-	private String email;
-	private String telefono;
-	private double valor;
-	private EstadoCliente estado;
+    private int id;
+    private String identificacion;
+    private String nombres;
+    private String email;
+    private String telefono;
+    private double valor;
+    private EstadoCliente estado;
 }

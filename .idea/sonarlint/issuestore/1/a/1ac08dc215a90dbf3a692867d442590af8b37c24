@@ -1,8 +1,0 @@
-
-\
-java:S4684·"@Replace this persistent entity with a simple POJO or DTO object.(É¿Ğòÿÿÿÿÿ
-W	java:S125"<This block of commented-out lines of code should be removed.(À©±çüÿÿÿÿ
-S
-java:S1854¡"7Remove this useless assignment to local variable "tel".(ª¬÷²şÿÿÿÿ
-D
-java:S1481¡"(Remove this unused "tel" local variable.(ª¬÷²şÿÿÿÿ

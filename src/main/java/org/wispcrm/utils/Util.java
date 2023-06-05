@@ -1,5 +1,8 @@
 package org.wispcrm.utils;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -17,5 +20,11 @@ public class Util {
         } else {
             return currencyFormatter.format(0.0);
         }
+    }
+
+    public static String currentUserName() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(authentication.getName());
+        return authentication.getName();
     }
 }

@@ -1,6 +1,8 @@
 package org.wispcrm.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +10,8 @@ import org.wispcrm.daos.ClienteDao;
 import org.wispcrm.daos.InterfaceFacturas;
 import org.wispcrm.daos.InterfacePagos;
 import org.wispcrm.utils.Util;
+
+import static org.wispcrm.utils.Util.currentUserName;
 
 @Controller
 public class HomeController {
@@ -30,7 +34,7 @@ public class HomeController {
                 Util.formatearMoneda(facturaDao.totalFacturasPendientesHistorico()));
         modelo.addAttribute("cantidadfacturaspendienteshistorico", facturaDao.totalCantidadFacturasHistorico());
         modelo.addAttribute("totalpagadashistorico", Util.formatearMoneda(facturaDao.totalFacturasPagadasHistorico()));
+        System.out.println("EL USUARIO LOGUEADO ES : "+currentUserName());
         return "home";
     }
-
-}
+  }

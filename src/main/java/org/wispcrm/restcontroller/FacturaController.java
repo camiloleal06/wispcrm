@@ -47,6 +47,8 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
 
+import static org.wispcrm.utils.Util.currentUserName;
+
 @Controller
 @SessionAttributes("factura")
 @Slf4j
@@ -507,21 +509,22 @@ public class FacturaController {
      */
     private void enviarSmsPagoRecibido(Factura factura) throws IOException {
         mailService.sendMail("sysredcartagena@gmail.com",
-                "camilojesus1@gmail.com","Pago recibido",
-                "Pago recibido de : "+factura.getCliente().getNombres()+ " "+factura.getCliente().getApellidos());
+                "camilojesus1@gmail.com", "Pago recibido",
+                "Pago recibido de : " + factura.getCliente()
+                        .getNombres() + " " + factura.getCliente()
+                        .getApellidos()+" "+ "cobrado por "+ currentUserName());
         try {
-           reporte.pagoPdfReport(factura.getId(), factura.getId()+"_pagada.pdf");
+            reporte.pagoPdfReport(factura.getId(),
+                    factura.getId() + "_pagada.pdf");
             ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
             executorService.schedule(() -> {
                 try {
-                    whatsappMessageService.sendDocumentAndMessage(factura.getCliente().getTelefono(),
-                            ESTIMADO_A + factura.getCliente().getNombres()
-                                    + ConstantMensaje.HEMOS_RECIBIDO_SU_PAGO,
-                            factura.getId()+"_pagada.pdf",
-                            ConstantMensaje.RUTA_DESCARGA_FACTURA_DOCS+factura.getId()+"_pagada.pdf");
-
-               /*     whatsappMessageService.sendSimpleMessage(factura.getCliente().getTelefono(),ESTIMADO_A + factura.getCliente().getNombres()
-                            + ConstantMensaje.HEMOS_RECIBIDO_SU_PAGO);*/
+                    whatsappMessageService.sendDocumentAndMessage(
+                            factura.getCliente().getTelefono(),
+                            ESTIMADO_A + factura.getCliente()
+                                    .getNombres() + ConstantMensaje.HEMOS_RECIBIDO_SU_PAGO + factura.getId(),
+                            factura.getId() + "_pagada.pdf",
+                            ConstantMensaje.RUTA_DESCARGA_FACTURA_DOCS + factura.getId() + "_pagada.pdf");
 
                 } catch (IOException e) {
                     throw new RuntimeException(e);
